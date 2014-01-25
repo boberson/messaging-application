@@ -1,0 +1,13 @@
+.container-int
+  .search-cont
+    input(type='text', style='width: 300px;', ng-modele='manage.query')
+    span.btn.btn-xs.btn-primary(ng-click='search()', style='margin: 2px;') Search
+  #messagecontainer
+    table#msgtable.table.table-striped.table-bordered.table-hover
+      tr(ng-repeat='message in manage.messages')
+        td(style='width: 20px;')
+          input(type='checkbox', ng-model='message.selected')
+        td {{message.name}}
+        td(style='width: 200px;')
+          a.btn.btn-primary.btn-lg(href='#/edit', ng-click='edit(message)') Edit
+          a.btn.btn-danger.btn-lg(href='#', style='margin-left: 2px;', ng-click='delete(message)') Delete

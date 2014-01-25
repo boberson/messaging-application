@@ -1,0 +1,133 @@
+/* app css stylesheet */
+
+.menu {
+  list-style: none;
+  border-bottom: 0.1em solid black;
+  margin-bottom: 2em;
+  padding: 0 0 0.5em;
+}
+
+.menu:before {
+  content: "[";
+}
+
+.menu:after {
+  content: "]";
+}
+
+.menu > li {
+  display: inline;
+}
+
+.menu > li:before {
+  content: "|";
+  padding-right: 0.3em;
+}
+
+.menu > li:nth-child(1):before {
+  content: "";
+  padding: 0;
+}
+// delivery tab css
+.deliv-cont {
+    position: relative;
+    height: 100%;
+    width:100%;
+}
+
+.buttons {
+    display: block;
+    margin: 20px;
+}
+
+
+//below here is for the createMessage page.
+
+
+.container-int {
+    position: relative;    
+    margin-top: 20px;
+    width: 100%;
+}
+
+.container-int input {
+    border-color: black;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.search-cont {
+  margin-bottom: 5px;
+}
+.message {
+    display: block;
+    width: 550px;
+    float: left;
+    margin-right: 20px;
+}
+.msgfld {
+    width: 550px;
+    border-color: black;
+    border-width: 1px;
+}
+
+.msgbody {
+    width: 550px;
+    height: 450px;
+    border-radius: 5px;
+}
+
+.tags {
+    display: block;
+}
+
+.msgtags {
+    display: inline-block;
+    width: 300px;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color:#f9f9f9;
+    height: 450px;
+    
+}
+
+.tag {
+    padding: 5px;
+    margin: 2px;
+    background-color: rgb(91, 192, 222);
+    border-radius: 5px;
+    display: inline-table;   
+}
+
+.buttongroup {
+    float: down;
+    display: block;
+    margin: 5px;
+}
+
+
+
+//Below here is for the Home page
+
+#messagecontainer {
+    padding-top:20px;
+    display: block;
+    position:relative;
+    width:80%;
+    
+}
+
+#msgtable {
+    display: block;
+    height: 437px;
+    width: 900px;
+    border-color: #fff;
+    overflow: auto;
+}
+    
+#msgtable tr td {
+    font-size: 22px;
+    width:900px;
+}
+
+

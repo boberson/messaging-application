@@ -1,0 +1,25 @@
+.container-int
+  .message
+      | Name:
+      br
+      input.msgfld(type='text', ng-model='message.name')
+      br
+      | Message:
+      br
+      textarea.msgbody(ng-model='message.text')
+      br
+      br
+      button.btn.btn-lg.btn-success(type='button') Submit
+      button.btn.btn-lg.btn-danger(type='button', style='margin-left:2px;') Cancel
+    .tags
+      | Add Tag:
+      br
+      input(type='text', ng-model='message.newtag', ng-keypress='keypressed($event)')
+      br
+      | Tags:
+      br
+      .msgtags
+        .tag(ng-repeat='tag in message.tags')
+          | {{tag}}
+          span.close(style='margin-left: 1px;', ng-click='removeTag(tag)') x
+
