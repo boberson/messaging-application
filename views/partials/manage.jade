@@ -1,10 +1,10 @@
 .container-int
   .search-cont
-    input(type='text', style='width: 300px;', ng-modele='manage.query')
-    span.btn.btn-xs.btn-primary(ng-click='search()', style='margin: 2px;') Search
+    span.label.label-success(style='margin: 2px;') Search
+    input(type='text', style='width: 300px;', ng-model='manage.searchText')    
   #messagecontainer
     table#msgtable.table.table-striped.table-bordered.table-hover
-      tr(ng-repeat='message in manage.messages')
+      tr(ng-repeat='message in manage.messages | filter:manage.searchText')
         td(style='width: 20px;')
           input(type='checkbox', ng-model='message.selected')
         td {{message.name}}

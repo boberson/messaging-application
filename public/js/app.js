@@ -5,7 +5,8 @@
 angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','ngRoute']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/manage', {templateUrl: 'partial/manage', controller: ManageCtrl});
-    $routeProvider.when('/create', {templateUrl: 'partial/create', controller: CreateCtrl});
+    $routeProvider.when('/create', {templateUrl: 'partial/msgForm', controller: CreateCtrl});
+    $routeProvider.when('/edit', {templateUrl: 'partial/msgForm', controller: EditCtrl});
     $routeProvider.otherwise({redirectTo: '/manage'});
     $locationProvider.html5Mode(true);
   }]);
