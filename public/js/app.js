@@ -7,6 +7,7 @@ angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','
     $routeProvider.when('/manage', {templateUrl: 'partial/manage', controller: ManageCtrl});
     $routeProvider.when('/create', {templateUrl: 'partial/msgForm', controller: CreateCtrl});
     $routeProvider.when('/edit', {templateUrl: 'partial/msgForm', controller: EditCtrl});
+    $routeProvider.when('/host', {templateUrl: 'partial/hostdb', controller: HostCtrl});
     $routeProvider.otherwise({redirectTo: '/manage'});
     $locationProvider.html5Mode(true);
   }]);

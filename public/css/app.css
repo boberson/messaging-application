@@ -130,4 +130,8 @@
     width:900px;
 }
 
+div.status-hidden {
+  display: none;
+}
+
 

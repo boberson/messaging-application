@@ -7,6 +7,7 @@ var express = require('express'),
   routes = require('./routes'),
   api = require('./routes/api'),
   http = require('http'),
+  db = require('./model/messaging')
   path = require('path');
 
 
@@ -44,7 +45,11 @@ app.get('/partial/:name', routes.partial);
 
 // JSON API
 app.get('/api/name', api.name);
-app.get('/api/messages', api.messages);
+app.get('/api/messages', api.getMessages);
+app.delete('/api/message/:id', api.deleteMessage);
+app.get('/api/message/:id', api.getMessage);
+app.put('/api/message', api.updateMessage);
+app.post('/api/message', api.createMessage);
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
 

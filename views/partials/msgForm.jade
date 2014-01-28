@@ -9,8 +9,8 @@
       textarea.msgbody(ng-model='message.text')
       br
       br
-      button.btn.btn-lg.btn-success(type='button') Submit
-      button.btn.btn-lg.btn-danger(type='button', style='margin-left:2px;') Cancel
+      button.btn.btn-lg.btn-success(type='button', ng-click="save(message)") Submit
+      button.btn.btn-lg.btn-danger(type='button', style='margin-left:2px;', ng-click="cancel()") Cancel
     .tags
       | Add Tag:
       br

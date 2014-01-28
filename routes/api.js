@@ -1,6 +1,14 @@
 /*
  * Serve JSON to our AngularJS client
  */
+var messaging = require("../model/messaging");
+var Message = messaging.model.Message;
+var url = require('url');
+
+var validateMessage = function(message, newMsg) {
+  //validates message fields. Returns true if message is good else false
+  return true;  
+};
 
 exports.name = function (req, res) {
   res.json({
@@ -8,18 +16,64 @@ exports.name = function (req, res) {
   });
 };
 
-var msg = "RTTUZHSW {osri}1616 {jul}0420-UUUU—{dri}.\r\nZNR UUCCC\r\nR {dtg}\r\n{fl6}\r\n{fl7}\r\nBT\r\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXTr\nA LINE OF TEXT A LINE OF TEXT A LINE OF TEXT\r\nBT\r\n#1616\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nNNNN";
 
-var messages = new Array();
-messages.push({"_id": "001", "name": "Message 1", "text": msg, "tags": ["GOOD", "ACP128", "Message 1", "1"]});
-messages.push({"_id": "002", "name": "Message 2", "text": msg, "tags": ["GOOD", "ACP128", "Message 2", "2"]});
-messages.push({"_id": "003", "name": "Message 3", "text": msg, "tags": ["GOOD", "ACP128", "Message 3", "3"]});
-messages.push({"_id": "004", "name": "Message 4", "text": msg, "tags": ["GOOD", "ACP128", "Message 4", "4"]});
-messages.push({"_id": "005", "name": "Message 5", "text": msg, "tags": ["GOOD", "ACP128", "Message 5", "5"]});
-messages.push({"_id": "006", "name": "Message 6", "text": msg, "tags": ["GOOD", "ACP128", "Message 6", "6"]});
-messages.push({"_id": "007", "name": "Message 7", "text": msg, "tags": ["GOOD", "ACP128", "Message 7", "7"]});
-messages.push({"_id": "008", "name": "Message 8", "text": msg, "tags": ["GOOD", "ACP128", "Message 8", "8"]});
 
-exports.messages = function (req, res) {
-  res.json(messages);
+exports.getMessages = function (req, res) {  
+  Message.find(function(error, results){
+    if(error) {
+      console.log("error querying db: " + error);
+    }
+    res.json(results);
+  });
+};
+
+exports.getMessage = function(req,res) {
+  var id = req.params.id;  
+  Message.find({ _id: id },function(error, results){
+    if(error) {
+      console.log("error querying db: " + error);
+    }
+    res.json(results);
+  });
+};
+
+exports.updateMessage = function(req,res) {
+  //should do some validation here of message here later.
+  var message = {};
+  var id = req.body._id;
+  message.text = req.body.text;
+  message.tags = req.body.tags;
+  message.name = req.body.name;  
+  Message.findOneAndUpdate({ _id: id }, message, { upsert: true }, function(msg){
+    console.log("Updated: " + msg);
+  });
+  res.json({status: "success"});
+  
+};
+
+exports.deleteMessage = function(req,res) {
+  var id = req.params.id;
+  Message.findByIdAndRemove(id, function(err, rst) {
+    if(err) {
+      console.log("Error: "+err);
+    };
+  });
+  
+};
+
+exports.createMessage = function(req,res) {
+  //should do validation of message here later.
+  var message = {};
+  message.text = req.body.text;
+  message.tags = req.body.tags;
+  message.name = req.body.name;  
+  Message.create(message, function(err, msg) {
+    if(err) {
+      console.log("Creation Error: " + err);
+      res.json({status: "success"});
+    } else {
+      console.log("Created Message: " + msg);
+    };
+  });
+    
 };

@@ -1,4 +1,5 @@
 .container-int
+  div(class="{{ manage.displayStatus }}") {{ manage.status }}
   .search-cont
     span.label.label-success(style='margin: 2px;') Search
     input(type='text', style='width: 300px;', ng-model='manage.searchText')    
