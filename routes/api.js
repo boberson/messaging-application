@@ -3,6 +3,7 @@
  */
 var messaging = require("../model/messaging");
 var Message = messaging.model.Message;
+var Host = messaging.model.Host;
 var url = require('url');
 
 var validateMessage = function(message, newMsg) {
@@ -16,7 +17,14 @@ exports.name = function (req, res) {
   });
 };
 
-
+exports.getHosts = function (req, res) {  
+  Host.find(function(error, results){
+    if(error) {
+      console.log("error querying db: " + error);
+    }
+    res.json(results);
+  });
+};
 
 exports.getMessages = function (req, res) {  
   Message.find(function(error, results){

@@ -7,9 +7,10 @@ var express = require('express'),
   routes = require('./routes'),
   api = require('./routes/api'),
   http = require('http'),
-  db = require('./model/messaging')
+  https = require('https'),
+  db = require('./model/messaging'),
+  fs = require('fs'),
   path = require('path');
-
 
 var app = module.exports = express();
 
@@ -21,6 +22,8 @@ var app = module.exports = express();
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
+app.use(express.cookieParser());
+app.use(express.session({secret: '1qaz@WSX3edc$RFV5tgb^YHN'}));
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -44,7 +47,11 @@ app.get('/', routes.index);
 app.get('/partial/:name', routes.partial);
 
 // JSON API
-app.get('/api/name', api.name);
+
+//Host API
+app.get('/api/hosts', api.getHosts);
+
+// Message API
 app.get('/api/messages', api.getMessages);
 app.delete('/api/message/:id', api.deleteMessage);
 app.get('/api/message/:id', api.getMessage);
@@ -56,6 +63,17 @@ app.get('*', routes.index);
 /**
 * Start Server
 */
+
+var options = {
+    key:    fs.readFileSync('ssl/turing_localhost.key'),
+    cert:   fs.readFileSync('ssl/turing_localhost.crt'),
+    ca:     fs.readFileSync('ssl/root-ca.crt'),
+    requestCert:        true,
+    rejectUnauthorized: true  
+};
+https.createServer(options, app).listen(443, function () {
+  console.log('Express SSL server listening on port ' + "443");
+});
 
 http.createServer(app).listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));

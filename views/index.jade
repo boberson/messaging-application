@@ -4,19 +4,20 @@ block body
   .navbar(role="navigation", ng-controller="HeaderCtrl")
       ul.nav.nav-tabs.nav-justified.navbar-default
         li(ng-class="{'active': isActive('/manage')}")
-          a(href="manage") Manage
-        li(ng-class="{'active': isActive('/create')}")
-          a(href="create") Create
-        li(ng-class="{'active': isActive('/deliver')}")
-          a(href="deliver") Deliver
-        li(ng-class="{'active': isActive('/hostdb')}")
-          a(href="hostdb") Host Database
+          a(href="manage") Messages
+        li(ng-class="{'active': isActive('/host')}")
+          a(href="host") Host Database
+        li(ng-class="{'active': isActive('/generate')}")
+          a(href="generate") Generate        
+        li(ng-class="{'active': isActive('/log')}")
+          a(href="log") Log
   .container      
     div(ng-view) 
 
 
   script(src='js/lib/angular/angular.js')
-  script(src='js/lib/angular/angular-route.js')
+  script(src='js/lib/angular-bootstrap/ui-bootstrap-tpls.js')
+  script(src='js/lib/angular-route/angular-route.js')
   script(src='js/app.js')
   script(src='js/services.js')
   script(src='js/controllers.js')

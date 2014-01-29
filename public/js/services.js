@@ -41,3 +41,33 @@ services.factory('MessageService',['$http', function($http) {
   
   return messageService;
 }]);
+
+services.factory('HostService',['$http', function($http) {
+  var hostService = {};
+  var allHostsUrl = '/api/hosts';
+  var hostUrl = '/api/host'
+  
+  
+  hostService.getHosts = function() {
+    return $http.get(allHostsUrl);
+  };
+  /*
+  messageService.updateMessage = function(message) {
+    return $http.put(messageUrl, JSON.stringify(message));
+  };
+  
+  messageService.createMessage = function(message) {
+    return $http.post(messageUrl, JSON.stringify(message));
+  };
+  
+  messageService.deleteMessage = function(id) {
+    if(id !== 'undefined') {
+      console.log(messageUrl+"/"+id);
+      return $http.delete(messageUrl+"/"+id);
+    };    
+  };
+  
+  messageService.status = "";
+  */
+  return hostService;
+}]);

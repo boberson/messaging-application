@@ -1,0 +1,29 @@
+.container-int
+  .search-cont
+      span.ma.label.label-success(style='margin: 2px;') Search
+      input.ma(type='text', ng-model='hostdb.searchText')
+  .host-container
+    table.ma-table.table.table-striped.table-bordered.table-hover
+      tr
+        th Alias
+        th SMTP Host
+        th Email Addr
+      tr(ng-repeat='host in hostdb.hosts | filter:hostdb.searchText', ng-click='setHost(host)')
+        td {{ host.alias }}
+        td {{ host.name}}
+        td {{ host.email }}
+   
+
+  .add-host-form
+    
+    span.ma(style='padding-left: 26px; padding-right: 26px;') Alias:
+    input.ma(type='text', ng-model='hostdb.newhost.alias')
+    br
+    span.ma SMTP Host:
+    input.ma(type='text', ng-model='hostdb.newhost.name')
+    br
+    span.ma(style='padding-left: 7px; padding-right: 8px;') Email Addr:
+    input.ma(type='text', ng-model='hostdb.newhost.email')
+    br
+    span.btn.btn-success.btn-xs(style='width: 60px; margin-top: 5px;', ng-click='save(hostdb.newhost)') Save
+    span.btn.btn-danger.btn-xs(style='margin-left: 2px; width: 60px; margin-top: 5px;', ng-click='clear()') Clear

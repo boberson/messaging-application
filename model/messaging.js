@@ -22,8 +22,8 @@ var db = mongoose.connect(uristring, function (err, res) {
 
 exports.model.hostSchema = new Schema({
   name: String,
-  smtphost: String,
-  email: String
+  email: String,
+  alias: String
 });
 
 exports.model.messageSchema = new Schema({
@@ -35,7 +35,7 @@ exports.model.messageSchema = new Schema({
 
 exports.model.Message = mongoose.model('Message', exports.model.messageSchema);
 
-exports.model.Host = mongoose.model('Host', exports.model.messageSchema);
+exports.model.Host = mongoose.model('Host', exports.model.hostSchema);
 
 
 
