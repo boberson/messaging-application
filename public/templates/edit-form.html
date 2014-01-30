@@ -11,11 +11,11 @@ and open the template in the editor.
     </div>
     <div class="modal-body container-int">
       <div class="message">Name:<br/>
-        <input type="text" ng-model="message.name" class="msgfld"/><br/>Message:<br/>
-        <textarea ng-model="message.text" class="msgbody"></textarea><br/><br/>
+        <input type="text" ng-model="message.name" class="msgfld" capitalize/><br/>Message:<br/>
+        <textarea ng-model="message.text" class="msgbody" capitalize></textarea><br/><br/>
       </div>
       <div class="tags">Add Tag:<br/>
-        <input type="text" ng-model="message.newtag" ng-keypress="keypressed($event)"/><br/>Tags:<br/>
+        <input type="text" ng-model="message.newtag" ng-keypress="keypressed($event)" capitalize/><br/>Tags:<br/>
         <div class="msgtags">
           <div ng-repeat="tag in message.tags" class="tag">{{tag}}<span style="margin-left: 1px;" ng-click="removeTag(tag)" class="close">x</span></div>
         </div>

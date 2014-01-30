@@ -1,8 +1,9 @@
 .container-int
-  .btn.btn-primary.btn-sm(style='margin-bottom: 3px; border-radius: 5px;', ng-click='newMessage()') New Message
+  .ma-btn.btn.btn-primary.btn-sm(ng-click='newMessage()') New Message
+  .ma-btn.btn.btn-primary.btn-sm(ng-click='refresh()') Refresh Messages
   .search-cont
     span.ma.label.label-success(style='margin: 2px;') Search
-    input.ma(type='text', ng-model='message.searchText')    
+    input.ma(type='text', ng-model='message.searchText', capitalize)    
   .message-container
     table.ma-table.table.table-striped.table-bordered.table-hover
         tr

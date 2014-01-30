@@ -1,5 +1,6 @@
 .container-int
-  .btn.btn-primary.btn-sm(style='margin-bottom: 3px; border-radius: 5px;', ng-click='newHost()') New Host
+  .ma-btn.btn.btn-primary.btn-sm(ng-click='newHost()') New Host
+  .ma-btn.btn.btn-primary.btn-sm(ng-click='refresh()') Refresh Hosts
   .search-cont
       span.ma.label.label-success(style='margin: 2px;') Search
       input.ma(type='text', ng-model='hostdb.searchText')

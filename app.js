@@ -66,7 +66,10 @@ app.get('*', routes.index);
 /**
 * Start Server
 */
-
+/*
+ * SSL Setup
+ */
+/*
 var options = {
     key:    fs.readFileSync('ssl/turing_localhost.key'),
     cert:   fs.readFileSync('ssl/turing_localhost.crt'),
@@ -76,7 +79,7 @@ var options = {
 };
 https.createServer(options, app).listen(443, function () {
   console.log('Express SSL server listening on port ' + "443");
-});
+});*/
 
 http.createServer(app).listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));

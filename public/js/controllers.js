@@ -23,6 +23,10 @@ function MessageCtrl($scope, MessageService, Message, $modal) {
     }
   }
   
+  $scope.refresh = function() {
+    getMessages();
+  }
+  
   $scope.delete = function(message) {
     var warning = "Are you sure you want to delete:\n"+message.name;
     var id = message._id;
@@ -176,6 +180,10 @@ function HostCtrl($scope, $location, HostService, $modal) {
   $scope.hostdb = {};
   $scope.hostdb.hosts = new Array();
   getHosts();
+  
+  $scope.refresh = function() {
+    getHosts();
+  }
   
   $scope.delete = function(host) {
     var warning = "Are you sure you want to delete Host:\n"+host.Alias;
