@@ -4,10 +4,8 @@
 // Declare app level module which depends on filters, and services
 angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','ngRoute', 'ui.bootstrap']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-    $routeProvider.when('/manage', {templateUrl: 'partial/manage', controller: ManageCtrl});
-    //$routeProvider.when('/create', {templateUrl: 'partial/msgForm', controller: CreateCtrl});
-    //$routeProvider.when('/edit', {templateUrl: 'partial/msgForm', controller: EditCtrl});
+    $routeProvider.when('/message', {templateUrl: 'partial/message', controller: MessageCtrl});
     $routeProvider.when('/host', {templateUrl: 'partial/hostdb', controller: HostCtrl});
-    $routeProvider.otherwise({redirectTo: '/manage'});
+    $routeProvider.otherwise({redirectTo: '/message'});
     $locationProvider.html5Mode(true);
   }]);

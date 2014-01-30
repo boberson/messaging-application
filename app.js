@@ -50,6 +50,9 @@ app.get('/partial/:name', routes.partial);
 
 //Host API
 app.get('/api/hosts', api.getHosts);
+app.delete('/api/host/:id', api.deleteHost);
+app.put('/api/host', api.updateHost);
+app.post('/api/host', api.createHost);
 
 // Message API
 app.get('/api/messages', api.getMessages);

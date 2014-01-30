@@ -3,8 +3,8 @@ extends layout
 block body
   .navbar(role="navigation", ng-controller="HeaderCtrl")
       ul.nav.nav-tabs.nav-justified.navbar-default
-        li(ng-class="{'active': isActive('/manage')}")
-          a(href="manage") Messages
+        li(ng-class="{'active': isActive('/message')}")
+          a(href="message") Messages
         li(ng-class="{'active': isActive('/host')}")
           a(href="host") Host Database
         li(ng-class="{'active': isActive('/generate')}")

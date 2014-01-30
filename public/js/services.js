@@ -15,7 +15,7 @@ services.factory('Message', function() {
 services.factory('MessageService',['$http', function($http) {
   var messageService = {};
   var allMessagesUrl = '/api/messages';
-  var messageUrl = '/api/message'
+  var messageUrl = '/api/message';
   
   
   messageService.getMessages = function() {
@@ -51,23 +51,21 @@ services.factory('HostService',['$http', function($http) {
   hostService.getHosts = function() {
     return $http.get(allHostsUrl);
   };
-  /*
-  messageService.updateMessage = function(message) {
-    return $http.put(messageUrl, JSON.stringify(message));
+  
+  hostService.updateHost = function(host) {
+    return $http.put(hostUrl, JSON.stringify(host));
   };
   
-  messageService.createMessage = function(message) {
-    return $http.post(messageUrl, JSON.stringify(message));
+  hostService.createHost = function(host) {
+    return $http.post(hostUrl, JSON.stringify(host));
   };
   
-  messageService.deleteMessage = function(id) {
+  hostService.deleteHost = function(id) {
     if(id !== 'undefined') {
-      console.log(messageUrl+"/"+id);
-      return $http.delete(messageUrl+"/"+id);
+      console.log(hostUrl+"/"+id);
+      return $http.delete(hostUrl+"/"+id);
     };    
   };
   
-  messageService.status = "";
-  */
   return hostService;
 }]);

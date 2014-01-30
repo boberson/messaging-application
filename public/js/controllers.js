@@ -7,26 +7,21 @@ function HeaderCtrl($scope, $location) {
   };
 }
 
-function ManageCtrl($scope, MessageService, Message, $modal) {
-  $scope.manage = {};
-  $scope.manage.messages;
-  $scope.manage.searchText = "";
+function MessageCtrl($scope, MessageService, Message, $modal) {
+  $scope.message = {};
+  $scope.message.messages;
+  $scope.message.searchText = "";
   getMessages();
   updateStatus();
   
   function updateStatus() {
-    $scope.manage.status = MessageService.status;  
-    if($scope.manage.status.length > 0) {
-      $scope.manage.displayStatus = "panel panel-lg panel-danger";
+    $scope.message.status = MessageService.status;  
+    if($scope.message.status.length > 0) {
+      $scope.message.displayStatus = "panel panel-lg panel-danger";
     } else {
-      $scope.manage.displayStatus = "status-invisible";
+      $scope.message.displayStatus = "status-invisible";
     }
   }
-  
-   
-  $scope.edit = function(message) {
-    Message.message = message;
-  };
   
   $scope.delete = function(message) {
     var warning = "Are you sure you want to delete:\n"+message.name;
@@ -42,26 +37,67 @@ function ManageCtrl($scope, MessageService, Message, $modal) {
       getMessages();
     }).
     error(function(data) {
-      $scope.manage.status = "Error getting messages: " + data.message;
+      $scope.message.status = "Error getting messages: " + data.message;
     });
   };  
   
   function getMessages() {
     MessageService.getMessages().
     success(function(data) {
-      $scope.manage.messages = data;
-      console.log("got messages");
+      $scope.message.messages = data;
     }).
     error(function(data) {
-      $scope.Manage.status = "Error getting messages: " + data.message;
-      console.log("problem getting messages");
+      $scope.message.status = "Error getting messages: " + data.message;
     });
   };
   
-  $scope.newMessage = function (message) {
+  function createMessage(msg, cb) {
+    MessageService.createMessage(msg).
+    success(function(data) {
+      MessageService.status = "Successfully Created Message: "+msg.name;
+      if(cb) {
+        cb();
+      };
+    }).
+    error(function(data) {
+      $scope.status = "Error getting messages: " + data.message;
+      if(cb) {
+        cb();
+      };
+    });
+  }
+  
+  function updateMessage(msg, cb) {
+    MessageService.updateMessage(msg).
+    success(function(data) {
+      $scope.status = "Successfully Created Message: "+msg.name;
+      if(cb) {
+        cb();
+      };
+    }).
+    error(function(data) {
+      $scope.status = "Error getting messages: " + data.message;
+      if(cb) {
+        cb();
+      };
+    });
+  };
+  
+  $scope.newMessage = function () {
     var modalInstance = $modal.open({
       templateUrl: 'templates/edit-form.html',
-      controller: CreateCtrl
+      controller: MessageFormCtrl,
+      resolve: {
+        message: function () {
+          return {};
+        },
+        title: function () {
+          return "New Message";
+        },
+        saveMessage: function() {
+          return createMessage;
+        }
+      }
     });
 
     modalInstance.result.then(function () {
@@ -75,10 +111,16 @@ function ManageCtrl($scope, MessageService, Message, $modal) {
     Message.message = message;
     var modalInstance = $modal.open({
       templateUrl: 'templates/edit-form.html',
-      controller: EditCtrl,
+      controller: MessageFormCtrl,
       resolve: {
         message: function () {
           return message;
+        },
+        title: function () {
+          return "Edit Message";
+        },
+        saveMessage: function() {
+          return updateMessage;
         }
       }
     });
@@ -91,15 +133,17 @@ function ManageCtrl($scope, MessageService, Message, $modal) {
   };
   
 }
-ManageCtrl.$inject = ['$scope', 'MessageService', 'Message', '$modal'];
+MessageCtrl.$inject = ['$scope', 'MessageService', 'Message', '$modal'];
 
-function CreateCtrl($scope, $location, MessageService, $modalInstance) {
-  $scope.message = {};
-  $scope.message.tags = new Array();
-  $scope.modalTitle = "New Message";
+function MessageFormCtrl($scope, $modalInstance, message, title, saveMessage) {
+  $scope.message = message;
+  $scope.modalTitle = title;
+  if(typeof $scope.message.tags === 'undefined') {
+      $scope.message.tags = new Array();
+  };  
   $scope.save = function(msg) {
-    createMessage(msg);   
-    $modalInstance.close();
+    saveMessage(msg, $modalInstance.close);   
+    
   };
 
   $scope.cancel = function () {
@@ -125,80 +169,22 @@ function CreateCtrl($scope, $location, MessageService, $modalInstance) {
     };
     $scope.message.newtag = "";
   };
-  
-  function createMessage(msg, cb) {
-    MessageService.createMessage(msg).
-    success(function(data) {
-      MessageService.status = "Successfully Created Message: "+msg.name;
-      cb();
-    }).
-    error(function(data) {
-      $scope.status = "Error getting messages: " + data.message;
-      cb();
-    });
-  }
 }
-CreateCtrl.$inject = ['$scope', '$location', 'MessageService', '$modalInstance'];
+MessageFormCtrl.$inject = ['$scope', '$modalInstance', 'message', 'title', 'saveMessage'];
 
-function EditCtrl($scope, $location, Message, MessageService, $modalInstance) {
-  $scope.message = Message.message;
-  $scope.status = MessageService.status;
-  $scope.modalTitle = "Edit Message";
-     
-  if(typeof $scope.message.tags === 'undefined') {
-      $scope.message.tags = new Array();
-  };      
-
-  $scope.save = function(msg) {
-    var warning = "Are you sure you want to update:\n"+msg.name;
-    if(window.confirm(warning)) {
-      updateMessage(msg, $modalInstance.close);
-    }    
-  };
-
-  $scope.cancel = function () {
-    $modalInstance.dismiss('cancel');
-  };
-
-  $scope.keypressed = function(event) {
-      if(event.keyCode === 13) {
-        $scope.addTag();
-      };
-  };
-
-  $scope.removeTag = function(tag) {
-      var index = $scope.message.tags.indexOf(tag);
-      if(index >= 0) {
-          $scope.message.tags.splice(index, 1);
-      };
-  };
-
-  $scope.addTag = function() {
-      if($scope.message.tags.indexOf($scope.message.newtag) < 0 && $scope.message.newtag.trim() !== ""){
-          $scope.message.tags.push($scope.message.newtag.trim());
-      };
-      $scope.message.newtag = "";
-  };
-
-  function updateMessage(msg, cb) {
-    MessageService.updateMessage(msg).
-    success(function(data) {
-      $scope.status = "Successfully Created Message: "+msg.name;
-      cb();
-    }).
-    error(function(data) {
-      $scope.status = "Error getting messages: " + data.message;
-      cb();
-    });
-  };
-}
-EditCtrl.$inject = ['$scope', '$location', 'Message', 'MessageService', '$modalInstance'];
-
-function HostCtrl($scope, $location, HostService) {
+function HostCtrl($scope, $location, HostService, $modal) {
   $scope.hostdb = {};
   $scope.hostdb.hosts = new Array();
-  $scope.hostdb.newhost = {};
   getHosts();
+  
+  $scope.delete = function(host) {
+    var warning = "Are you sure you want to delete Host:\n"+host.Alias;
+    var id = host._id;
+    if(window.confirm(warning)) {
+      deleteHost(id);
+    };
+  }
+  
   function getHosts() {
     HostService.getHosts().
     success(function(data) {
@@ -209,106 +195,108 @@ function HostCtrl($scope, $location, HostService) {
     });
   };
   
-  $scope.setHost = function(host) {
-    $scope.hostdb.newhost = host;
+  function deleteHost(id) {
+    HostService.deleteHost(id).
+    success(function(data) {
+      getHosts();
+    }).
+    error(function(data) {
+      $scope.message.status = "Error getting messages: " + data.message;
+    });
   };
   
-  $scope.clear = function() {
-    $scope.hostdb.newhost = {};
+  function createHost(msg, cb) {
+    HostService.createHost(msg).
+    success(function(data) {
+      HostService.status = "Successfully Created Host: "+msg.name;
+      if(cb) {
+        cb();
+      };
+    }).
+    error(function(data) {
+      $scope.status = "Error getting Hosts: " + data.message;
+      if(cb) {
+        cb();
+      };
+    });
+  }
+  
+  function updateHost(msg, cb) {
+    HostService.updateHost(msg).
+    success(function(data) {
+      $scope.status = "Successfully Created Host: "+msg.name;
+      if(cb) {
+        cb();
+      };
+    }).
+    error(function(data) {
+      $scope.status = "Error getting messages: " + data.message;
+      if(cb) {
+        cb();
+      };
+    });
   };
-}
-HostCtrl.$inject = ['$scope', '$location', 'HostService'];
-
-/*var ModalDemoCtrl = function ($scope, $modal, $log) {
-
-  $scope.items = ['item1', 'item2', 'item3'];
-
-  $scope.open = function () {
-
+  
+  $scope.newHost = function () {
     var modalInstance = $modal.open({
-      templateUrl: 'templates/modal.html',
-      controller: ModalInstanceCtrl,
+      templateUrl: 'templates/host-form.html',
+      controller: HostFormCtrl,
       resolve: {
-        items: function () {
-          return $scope.items;
+        host: function() {
+          return {};
+        },
+        title: function() {
+          return "New Host";
+        },
+        save: function() {
+          return createHost;
         }
       }
     });
 
-    modalInstance.result.then(function (selectedItem) {
-      $scope.selected = selectedItem;
+    modalInstance.result.then(function () {
+      getHosts();  
     }, function () {
-      $log.info('Modal dismissed at: ' + new Date());
+      getHosts();
     });
   };
-};*/
-/*var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
-
-  $scope.items = items;
-  $scope.selected = {
-    item: $scope.items[0]
+  
+  $scope.editHost = function (host) {
+    var modalInstance = $modal.open({
+      templateUrl: 'templates/host-form.html',
+      controller: HostFormCtrl,
+      resolve: {
+        host: function () {
+          return host;
+        },
+        title: function() {
+          return "Edit Host";
+        },
+        save: function() {
+          return updateHost;
+        }
+      }
+    });
+    modalInstance.result.then(function () {
+      getHosts();
+    }, function () {
+      getHosts();
+    });
   };
+}
+HostCtrl.$inject = ['$scope', '$location', 'HostService', '$modal'];
 
-  $scope.ok = function () {
-    $modalInstance.close($scope.selected.item);
+function HostFormCtrl($scope, HostService, $modalInstance, host, title, save) {
+  $scope.hostform = {};
+  $scope.hostform.host = host;
+  $scope.modalTitle = title;
+  
+  $scope.save = function(h) {   
+    save(h,$modalInstance.close);
   };
 
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
-  };
-};*/
-/*function EditCtrl($scope, $location, Message, MessageService) {
-  $scope.message = Message.message;
-  $scope.status = MessageService.status;
-  if(typeof $scope.message === 'undefined' || $scope.message === {}) {
-      alert("No message selected to edit please click edit on the desired message!");
-      $location.path('/manage');
-  }     
-  else if(typeof $scope.message.tags === 'undefined') {
-      $scope.message.tags = new Array();
-  };      
-
-  $scope.keypressed = function(event) {
-      if(event.keyCode === 13) {
-        $scope.addTag();
-      };
-  };
-
-  $scope.removeTag = function(tag) {
-      var index = $scope.message.tags.indexOf(tag);
-      if(index >= 0) {
-          $scope.message.tags.splice(index, 1);
-      };
-  };
-
-  $scope.addTag = function() {
-      if($scope.message.tags.indexOf($scope.message.newtag) < 0 && $scope.message.newtag.trim() !== ""){
-          $scope.message.tags.push($scope.message.newtag.trim());
-      };
-      $scope.message.newtag = "";
-  };
-
-  $scope.cancel = function() {
-      $location.path('/manage');
-  };
-
-  $scope.save = function(msg) {
-    var warning = "Are you sure you want to update:\n"+msg.name;
-    if(window.confirm(warning)) {
-      updateMessage(msg);
-    }
-    $location.path('/manage');
-  };
-
-  function updateMessage(msg) {
-    MessageService.updateMessage(msg).
-    success(function(data) {
-      $scope.status = "Successfully Created Message: "+msg.name;
-      $location.path('/manage');
-    }).
-    error(function(data) {
-      $scope.status = "Error getting messages: " + data.message;
-    });
-  };
+  };  
 }
-EditCtrl.$inject = ['$scope', '$location', 'Message', 'MessageService'];*/
+HostFormCtrl.$inject = ['$scope', 'HostService', '$modalInstance', 'host', 'title', 'save'];
