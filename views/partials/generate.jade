@@ -1,55 +1,63 @@
 .container-int
   input#email(type='checkbox', ng-model='generate.se') 
   span.ma Email
-  span.ma-btn.btn.btn-primary.btn-sm(ng-click='generateAction()', ng-disabled='!generateButtonEnabled()') {{ generateBtnText }}
-  .search-cont
-    span.ma.label.label-success(style='margin: 2px;') Search Messages
-    input.ma(type='text', ng-model='generate.msgSearch', capitalize)    
-  .message-container
-    table.ma-table.table.table-striped.table-bordered.table-hover(style='height:281px;')
-        tr
-          th(style='width: 10px;') 
-            input(type='checkbox', ng-model='generate.selectAllMsgs')
-          th Message Title
-          th Tags
-        tr(ng-repeat='message in generate.messages | filter:generate.msgSearch')
-          td(style='width: 10px;')
-            input(type='checkbox', ng-model='message.selected')            
-          td {{message.name}}
-          td(style='width:300px;') {{ message.tags.join(',') }}
+  span.ma-btn.btn.btn-primary.btn-sm(ng-click='generateAction()', ng-disabled='!generateButtonEnabled()', style='margin-bottom:5px;') {{ generateBtnText }}
+  accordion(close-others="oneAtATime")
+    accordion-group(is-open="isopen.msgs")
+      accordion-heading Messages
+        i.pull-right.glyphicon(ng-class='{"glyphicon-chevron-down": isopen.msgs, "glyphicon-chevron-right": !isopen.msgs}')
+      .search-cont
+        span.ma.label.label-success(style='margin: 2px;') Search Messages
+        input.ma(type='text', ng-model='generate.msgSearch', capitalize)    
+      .message-container
+        table.ma-table.table.table-striped.table-bordered.table-hover(style='height:281px;')
+            tr
+              th(style='width: 10px;') 
+                input(type='checkbox', ng-model='generate.selectAllMsgs')
+              th Message Title
+              th Tags
+            tr(ng-repeat='message in generate.messages | filter:generate.msgSearch')
+              td(style='width: 10px;')
+                input(type='checkbox', ng-model='message.selected')            
+              td {{message.name}}
+              td(style='width:300px;') {{ message.tags.join(',') }}
+    accordion-group(is-open="isopen.var")
+      accordion-heading Variable Set
+        i.pull-right.glyphicon(ng-class='{"glyphicon-chevron-down": isopen.var, "glyphicon-chevron-right": !isopen.var}')
+      .search-cont
+          span.ma.label.label-success(style='margin: 2px;') Search Variable Sets
+          input.ma(type='text', ng-model='generate.varSearch')
+      .host-container
+        table.ma-table.table.table-striped.table-bordered.table-hover
+          tr
+            th(style='width: 10px;') 
+            th Name
+            th From
+          tr(ng-repeat='varset in generate.varsets | filter:generate.varSearch')
+            td(style='width:10px;')
+                input(type='radio', name='v', ng-model='generate.varset', ng-value='varset')
+            td {{ varset.name }}
+            td {{ varset.from}}
+    .smtp-cont(ng-class='{hidden: !generate.se}', style='margin-top:5px;')
+      accordion-group(is-open="isopen.host")
+        accordion-heading Email Host
+          i.pull-right.glyphicon(ng-class='{"glyphicon-chevron-down": isopen.host, "glyphicon-chevron-right": !isopen.host}')
+        .search-cont
+            span.ma.label.label-success(style='margin: 2px;') Search Hosts
+            input.ma(type='text', ng-model='generate.hostSearch')
+        .host-container(style='margin: 0px; padding: 0px;')
+          table.ma-table.table.table-striped.table-bordered.table-hover(style='height:300px;')
+            tr
+              th(style='width: 10px;') 
+                  input(type='checkbox', ng-model='generate.selectAllHosts')
+              th Alias
+              th SMTP Host
+              th Email Addr
+            tr(ng-repeat='host in generate.hosts | filter:generate.hostSearch')
+              td(style='width:10px;')
+                input(type='checkbox', ng-model='host.selected')
+              td {{ host.alias }}
+              td {{ host.name}}
+              td {{ host.email }}
 
-  .search-cont
-      span.ma.label.label-success(style='margin: 2px;') Search Variable Sets
-      input.ma(type='text', ng-model='generate.varSearch')
-  .host-container
-    table.ma-table.table.table-striped.table-bordered.table-hover(style='height:150px')
-      tr
-        th(style='width: 10px;') 
-        th Name
-        th From
-      tr(ng-repeat='varset in generate.varsets | filter:generate.varSearch')
-        td(style='width:10px;')
-            input(type='checkbox', ng-model='varset.selected')
-        td {{ varset.name }}
-        td {{ varset.from}}
-
-  .smtp-hosts(ng-class='{hidden: !generate.se}')
-    .search-cont
-        span.ma.label.label-success(style='margin: 2px;') Search Hosts
-        input.ma(type='text', ng-model='generate.hostSearch')
-    .host-container(style='margin: 0px; padding: 0px;')
-      table.ma-table.table.table-striped.table-bordered.table-hover(style='height:300px;')
-        tr
-          th(style='width: 10px;') 
-              input(type='checkbox', ng-model='generate.selectAllHosts')
-          th Alias
-          th SMTP Host
-          th Email Addr
-        tr(ng-repeat='host in generate.hosts | filter:generate.hostSearch')
-          td(style='width:10px;')
-            input(type='checkbox', ng-model='host.selected')
-          td {{ host.alias }}
-          td {{ host.name}}
-          td {{ host.email }}
-    
     

@@ -56,7 +56,7 @@ app.post('/api/host', api.createHost);
 
 // Message API
 app.get('/api/messages', api.getMessages);
-app.get('/api/message/:id', api.getMessage);
+//app.get('/api/message/:id', api.getMessage);
 app.delete('/api/message/:id', api.deleteMessage);
 app.put('/api/message', api.updateMessage);
 app.post('/api/message', api.createMessage);
@@ -71,6 +71,10 @@ app.post('/api/varset', api.createVarSet);
 app.get('/api/meta/tags', api.getAllTags);
 app.get('/api/meta/ris', api.getAllRIs);
 app.get('/api/meta/plas', api.getAllPLAs);
+
+//Generate API
+app.post('/api/submit', api.submitMsgs);
+
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);

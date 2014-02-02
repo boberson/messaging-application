@@ -295,7 +295,6 @@ function VarCtrl($scope, $modal, VarService) {
 VarCtrl.$inject = ['$scope', '$modal', 'VarService'];
 
 function VarFormCtrl($scope, $modalInstance, VarService, MetadataService, varSet, title, save) {
-  $scope.varform = {};
   $scope.template = varSet;
   $scope.modalTitle = title;
   $scope.other = {};
@@ -304,6 +303,15 @@ function VarFormCtrl($scope, $modalInstance, VarService, MetadataService, varSet
   $scope.riList = new Array();
   getRIs();
   getPLAs();
+  if(!$scope.template.dri) {
+    $scope.template.dri = new Array();
+  }
+  if(!$scope.template.action) {
+    $scope.template.action = new Array();
+  }
+  if(!$scope.template.info) {
+    $scope.template.info = new Array();
+  }
   
   function getPLAs() {
     MetadataService.getPLAs().
@@ -362,8 +370,8 @@ function VarFormCtrl($scope, $modalInstance, VarService, MetadataService, varSet
     };    
   };
   
-  $scope.validLists = function(obj) {
-    return (obj.dri.length > 0) && (obj.action.length > 0) && (obj.info.length > 0);
+  $scope.validLists = function() {
+    return ($scope.template.dri.length > 0) && ($scope.template.action.length > 0) && ($scope.template.info.length > 0);
   };
   
   $scope.remove = function(idx, list) {
@@ -522,11 +530,16 @@ function HostFormCtrl($scope, HostService, $modalInstance, host, title, save) {
 }
 HostFormCtrl.$inject = ['$scope', 'HostService', '$modalInstance', 'host', 'title', 'save'];
 
-function GenerateCtrl($scope, $filter, MessageService, HostService, VarService) {
+function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarService) {
   $scope.generate = {};
   $scope.generate.messages = new Array();
   $scope.generate.hosts = new Array();
   $scope.generate.varsets = new Array();
+  $scope.oneAtATime = true;
+  $scope.isopen = {};
+  $scope.isopen.var = false;
+  $scope.isopen.msgs = false;
+  $scope.isopen.host = false;
   $scope.generate.se = true;
   getMessages();
   getHosts();
@@ -541,7 +554,7 @@ function GenerateCtrl($scope, $filter, MessageService, HostService, VarService) 
   }
   
   $scope.generateButtonEnabled = function() {
-    if(($scope.generate.messages.filter(isSelected).length > 0) && ($scope.generate.varsets.filter(isSelected).length > 0)) {
+    if(($scope.generate.messages.filter(isSelected).length > 0) && ($scope.generate.varset)) {
       if($scope.generate.se) {
         return ($scope.generate.hosts.filter(isSelected).length > 0);
       } else {
@@ -602,6 +615,28 @@ function GenerateCtrl($scope, $filter, MessageService, HostService, VarService) 
     });
   };
   
+  $scope.generateAction = function() {
+    var data = {};
+    var submitUrl = "/api/submit"
+    data.email = $scope.generate.se;
+    data.hosts = new Array();
+    if(data.email) {
+      data.hosts = $scope.generate.hosts.filter(isSelected); 
+    }
+    data.messages = $scope.generate.messages.filter(isSelected);
+    data.varset = $scope.generate.varset;
+    $http({url: submitUrl, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){
+      console.log("Hooray!");
+      console.log(data);
+      console.log(status);
+    }).error(function(data, status, headers, config){
+      console.log("Suck : (");
+      console.log(data);
+      console.log(status);
+    });
+    
+  }
+  
 };
-GenerateCtrl.$inject = ['$scope', '$filter', 'MessageService', 'HostService', 'VarService'];
+GenerateCtrl.$inject = ['$scope', '$filter', '$http', 'MessageService', 'HostService', 'VarService'];
 

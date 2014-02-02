@@ -6,10 +6,19 @@ var Message = messaging.model.Message;
 var Host = messaging.model.Host;
 var VarSet = messaging.model.VarSet;
 var url = require('url');
+var fs = require('fs');
+var EasyZip = require('easy-zip').EasyZip;
+
 
 var validateMessage = function(message, newMsg) {
   //validates message fields. Returns true if message is good else false
   return true;  
+};
+// helper to send json and mitigate json vuln
+var sendJson = function(code, json, response) {
+  data = ")]}',\n" + JSON.stringify(json);
+  response.writeHead(code, {'Content-Type': 'text/plain' });
+  response.end(data);
 };
 
 /*
@@ -20,7 +29,8 @@ exports.getHosts = function (req, res) {
     if(error) {
       console.log("error querying db: " + error);
     }
-    res.json(results);
+    //res.json(results);
+    sendJson(200, results, res);
   });
 };
 
@@ -81,11 +91,12 @@ exports.getMessages = function (req, res) {
     if(error) {
       console.log("error querying db: " + error);
     }
-    res.json(results);
+    //res.json(results);
+    sendJson(200, results, res);
   });
 };
 
-exports.getMessage = function(req,res) {
+/*exports.getMessage = function(req,res) {
   var id = req.params.id;  
   Message.find({ _id: id },function(error, results){
     if(error) {
@@ -93,7 +104,7 @@ exports.getMessage = function(req,res) {
     }
     res.json(results);
   });
-};
+};*/
 
 exports.createMessage = function(req,res) {
   //should do validation of message here later.
@@ -153,7 +164,8 @@ exports.getVarSets = function (req, res) {
     if(error) {
       console.log("error querying db: " + error);
     }
-    res.json(results);
+    //res.json(results);
+    sendJson(200, results, res);
   });
 };
 /* Need to change the attributes from what a host was to what a varset is */
@@ -231,7 +243,8 @@ exports.getAllTags = function (req, res) {
       if(err) {
         res.jsonp(500, {"error": err});
       } else {
-        res.json(result);
+        //res.json(result);
+        sendJson(200, result, res);
       };
   });
 };
@@ -254,7 +267,8 @@ exports.getAllPLAs = function(req, res) {
       if(err) {
         res.jsonp(500, {"error": err});
       } else {
-        res.json(result);
+        //res.json(result);
+        sendJson(200, result, res);
       };
   });
 };
@@ -274,7 +288,113 @@ exports.getAllRIs = function(req, res) {
       if(err) {
         res.jsonp(500, {"error": err});
       } else {
-        res.json(result);
+        //res.json(result);
+        sendJson(200, result, res);
       };
   });
+};
+
+/*
+ * Generate API
+ */
+
+var rmrf = function(path) {
+    var files = [];
+    if( fs.existsSync(path) ) {
+        files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+function uploadMessages(messages, res) { 
+  var tmpmsgdir = __dirname + "/../tmp/messages/";
+  var zipfname = __dirname + "/../tmp/messages.zip";
+  var fname, msg;
+  rmrf(tmpmsgdir);
+  fs.mkdirSync(tmpmsgdir);
+  for (var i in messages) {
+    fname = messages[i].name + ".txt";
+    msg = messages[i].message;
+    fs.writeFileSync(tmpmsgdir+fname, msg);
+  };    
+  
+  var zip = new EasyZip();
+  zip.zipFolder(tmpmsgdir,function(){
+    zip.writeToFile(zipfname);
+    res.download(zipfname);
+  });
+  
+  
+}
+
+function processMessages(msgTmpls, varset) {
+  function pad(num, spcs) {
+    var s = num+"";
+    while (s.length < spcs) s = "0" + s;
+    return s;
+  };
+  function getDoY(date) {
+    var millisInDay = 86400000;
+    var firstOfYear = new Date(date.getFullYear(), 0, 1); 
+    return Math.round(((date - firstOfYear) / millisInDay) + .5, 0);
+  };
+  function getDTG(date) {
+    var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    var dtg = pad(date.getDate(),2) + pad(date.getHours(),2) + pad(date.getMinutes(),2) + "Z " + months[date.getMonth()] + " " + date.getFullYear().toString().slice(2); ;
+  };
+  function getParams(varset) {
+    var params = {};
+    params.osri = varset.osri;
+    params.dri = varset.dri.join(" ");
+    params.fl6 = "FM " + varset.from;
+    params.fl7 = "TO " + varset.action.join("\r\n");
+    params.fl8 = "INFO " + varset.info.join("\r\n");
+    return params;  
+  };
+  function incrDateByOneMinute(datev){
+    var millisInMinute = 60000;
+    var newtime = datev.getTime() + millisInMinute;
+    return new Date(newtime);
+  };
+  
+  var params = getParams(varset);
+  var messages = new Array();
+  var message;
+  var date = new Date(varset.dtg);
+  for(var i in msgTmpls) {
+    message = msgTmpls[i].text;
+    for(var j in params) {
+      re = "{"+ j.toUpperCase() +"}";
+      message = message.replace(re, params[j], 'i');
+    }
+    dtg = getDTG(date);
+    jul = pad(getDoY(date),3);
+    message = message.replace("{DTG}",dtg,i);
+    message = message.replace("{JUL}",jul,i);
+    date = incrDateByOneMinute(date);
+    msgObj = { name: msgTmpls[i].name, message: message };
+    messages.push(msgObj);
+  }
+  return messages;
+};
+
+exports.submitMsgs = function(req, res) {
+  var data = {};
+  data.email = req.body.email;
+  data.messageTemplates = req.body.messages;
+  data.varset = req.body.varset;
+  var messages = processMessages(data.messageTemplates, data.varset);
+  
+  if(data.email) {
+    data.hosts = req.body.hosts;
+  } else {
+    uploadMessages(messages, res);
+  };
 };
