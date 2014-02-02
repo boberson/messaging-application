@@ -45,7 +45,7 @@ services.factory('MessageService',['$http', function($http) {
 services.factory('HostService',['$http', function($http) {
   var hostService = {};
   var allHostsUrl = '/api/hosts';
-  var hostUrl = '/api/host'
+  var hostUrl = '/api/host';
   
   
   hostService.getHosts = function() {
@@ -68,4 +68,52 @@ services.factory('HostService',['$http', function($http) {
   };
   
   return hostService;
+}]);
+
+services.factory('VarService',['$http', function($http) {
+  var varService = {};
+  var varSvcUrl = '/api/varset';
+  var varSetsUrl = '/api/varsets';
+  
+  varService.getVarSets = function() {
+    return $http.get(varSetsUrl);
+  };
+  
+  varService.updateVarSet = function(varset) {
+    return $http.put(varSvcUrl, JSON.stringify(varset));
+  };
+  
+  varService.createVarSet = function(varset) {
+    return $http.post(varSvcUrl, JSON.stringify(varset));
+  };
+  
+  varService.deleteVarSet = function(id) {
+    if(id !== 'undefined') {
+      return $http.delete(varSvcUrl+"/"+id);
+    };    
+  };
+  
+  
+  return varService;
+}]);
+services.factory('MetadataService',['$http', function($http) {
+  var metaService = {};
+  var metaSvcUrl = '/api/meta';
+  
+  metaService.getTags = function() {
+    return $http.get(metaSvcUrl+'/tags');
+  };
+  
+  metaService.getRIs = function() {
+    return $http.get(metaSvcUrl+'/ris');
+  };
+  
+  metaService.getPLAs = function() {
+    return $http.get(metaSvcUrl+'/plas');
+  };
+  
+  
+  
+  return metaService;
+
 }]);

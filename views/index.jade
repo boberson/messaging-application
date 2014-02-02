@@ -5,6 +5,8 @@ block body
       ul.nav.nav-tabs.nav-justified.navbar-default
         li(ng-class="{'active': isActive('/message')}")
           a(href="message") Messages
+        li(ng-class="{'active': isActive('/var')}")
+          a(href="var") Variables
         li(ng-class="{'active': isActive('/host')}")
           a(href="host") Host Database
         li(ng-class="{'active': isActive('/generate')}")

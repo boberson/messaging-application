@@ -1,0 +1,55 @@
+.container-int
+  input#email(type='checkbox', ng-model='generate.se') 
+  span.ma Email
+  span.ma-btn.btn.btn-primary.btn-sm(ng-click='generateAction()', ng-disabled='!generateButtonEnabled()') {{ generateBtnText }}
+  .search-cont
+    span.ma.label.label-success(style='margin: 2px;') Search Messages
+    input.ma(type='text', ng-model='generate.msgSearch', capitalize)    
+  .message-container
+    table.ma-table.table.table-striped.table-bordered.table-hover(style='height:281px;')
+        tr
+          th(style='width: 10px;') 
+            input(type='checkbox', ng-model='generate.selectAllMsgs')
+          th Message Title
+          th Tags
+        tr(ng-repeat='message in generate.messages | filter:generate.msgSearch')
+          td(style='width: 10px;')
+            input(type='checkbox', ng-model='message.selected')            
+          td {{message.name}}
+          td(style='width:300px;') {{ message.tags.join(',') }}
+
+  .search-cont
+      span.ma.label.label-success(style='margin: 2px;') Search Variable Sets
+      input.ma(type='text', ng-model='generate.varSearch')
+  .host-container
+    table.ma-table.table.table-striped.table-bordered.table-hover(style='height:150px')
+      tr
+        th(style='width: 10px;') 
+        th Name
+        th From
+      tr(ng-repeat='varset in generate.varsets | filter:generate.varSearch')
+        td(style='width:10px;')
+            input(type='checkbox', ng-model='varset.selected')
+        td {{ varset.name }}
+        td {{ varset.from}}
+
+  .smtp-hosts(ng-class='{hidden: !generate.se}')
+    .search-cont
+        span.ma.label.label-success(style='margin: 2px;') Search Hosts
+        input.ma(type='text', ng-model='generate.hostSearch')
+    .host-container(style='margin: 0px; padding: 0px;')
+      table.ma-table.table.table-striped.table-bordered.table-hover(style='height:300px;')
+        tr
+          th(style='width: 10px;') 
+              input(type='checkbox', ng-model='generate.selectAllHosts')
+          th Alias
+          th SMTP Host
+          th Email Addr
+        tr(ng-repeat='host in generate.hosts | filter:generate.hostSearch')
+          td(style='width:10px;')
+            input(type='checkbox', ng-model='host.selected')
+          td {{ host.alias }}
+          td {{ host.name}}
+          td {{ host.email }}
+    
+    

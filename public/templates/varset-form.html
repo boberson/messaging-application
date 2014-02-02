@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" ng-click="cancel()">&times;</button>
+      <h4 class="modal-title">{{modalTitle}}</h4>
+    </div>
+    <form name='form' class='css-form'>
+      <div class="modal-body container-int">
+        <div class="template">
+          Name:<br/>
+          <input type="text" ng-model="template.name" class="ri-fld" required capitalize/><br/>
+          OSRI:<br/>
+          <input type="text" ng-model="template.osri" class="ri-fld" typeahead='ri for ri in riList | filter:$viewValue' required capitalize/><br/>
+          DRI:<br/>
+          <input type="text" ng-model="other.dri" class="ri-vld" typeahead='ri for ri in riList | filter:$viewValue' capitalize/> <span class="btn btn-xs btn-primary" ng-click="add(other.dri, template.dri); other.dri = '';">+</span><br/>
+          <div ng-repeat="dri in template.dri" class='ri'>{{dri}}<span style="margin-left: 1px;" ng-click="remove($index, template.dri)" class="close">&times;</span></div>
+          Start Date:<br/>
+          <div class="input-group" style='width:300px;'>
+            <input type="text" datepicker-popup="MM-dd-yy" style=' height: 25px;' class='form-control' ng-model="template.dtg" is-open='other.opened' ng-required="true" show-button-bar="false" show-weeks="false" />
+            <span class="input-group-btn" >
+                  <button class="btn btn-default" style=' height: 25px;' ng-click="open($event)"><i class="glyphicon glyphicon-calendar" style=' height: 25px;'></i></button>
+            </span>
+          </div>
+          From:<br/>
+          <input type="text" ng-model="template.from" class="pla-fld" style="margin-bottom:8px;" typeahead='pla for pla in plaList | filter:$viewValue' required capitalize/><br/>
+          Action:<br/>
+          <input type="text" ng-model="other.action" class="pla-fld" typeahead='pla for pla in plaList | filter:$viewValue' capitalize/> <span class="btn btn-xs btn-primary" ng-click="add(other.action, template.action); other.action = '';">+</span><br/>
+          <div ng-repeat="action in template.action" class='pla'>{{action}}<span style="margin-left: 1px;" ng-click="remove($index, template.action)" class="close">&times;</span></div>
+          Info:<br/>
+          <input type="text" ng-model="other.info" class="pla-fld" typeahead='pla for pla in plaList | filter:$viewValue' capitalize/> <span class="btn btn-xs btn-primary" ng-click="add(other.info, template.info); other.info = '';">+</span><br/>
+          <div ng-repeat="info in template.info" class='pla'>{{info}}<span style="margin-left: 1px;" ng-click="remove($index, template.info)" class="close">&times;</span></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-disabled="form.$invalid || !changed(template) || !validLists(template)" ng-click="save(template)">Save</button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+      </div>
+    </form>
+  </div><!-- /.modal-content -->

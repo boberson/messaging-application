@@ -28,10 +28,23 @@ exports.model.hostSchema = new Schema({
 
 exports.model.messageSchema = new Schema({
   name: String,
+  description: String,
   text: String,
   tags: [String],
   created: { type: Date, default: Date.now } 
 });
+
+exports.model.varSetSchema = new Schema({
+  name: String,
+  osri: String,
+  dri: [String],
+  from: String,
+  action: [String],
+  info: [String],
+  dtg: { type: Date }
+});
+
+exports.model.VarSet = mongoose.model('VarSet', exports.model.varSetSchema);
 
 exports.model.Message = mongoose.model('Message', exports.model.messageSchema);
 

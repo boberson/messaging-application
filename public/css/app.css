@@ -53,8 +53,14 @@ span.ma {
     display: block;
     margin: 20px;
 }
-
-
+ .css-form input.ng-invalid.ng-dirty {
+        background-color: #FA787E;
+ }
+ .css-form textarea.ng-invalid.ng-dirty {
+        background-color: #FA787E;
+ }
+    
+ 
 //below here is for the createMessage page.
 
 
@@ -112,11 +118,10 @@ span.ma {
     margin: 2px;
     background-color: rgb(91, 192, 222);
     border-radius: 5px;
-    display: inline-table;   
+    display: inline-table;
 }
 
 .buttongroup {
-    float: down;
     display: block;
     margin: 5px;
 }
@@ -140,7 +145,7 @@ div.status-hidden {
 //hostdb style
 
 .host-container {
-    padding-top:20px;
+    margin-top:20px;
     display: block;
     position:relative;
     width:80%;    
@@ -155,4 +160,38 @@ div.status-hidden {
   
 }
 
+// generate page
+.smtp-hosts {
+  display:inline-block;
+}
 
+
+// varset page
+.ri-fld {
+    width: 50px;
+    border-color: black;
+    border-width: 1px;
+}
+.ri {
+    padding: 5px;
+    width: 150px;
+    margin: 2px;
+    background-color: rgb(91, 192, 222);
+    border-radius: 5px;
+    display: block;
+}
+
+.pla-fld {
+  width: 300px;
+  border-color: black;
+  border-width: 1px;
+}
+
+.pla {
+    padding: 5px;
+    width: 300px;
+    margin: 2px;
+    background-color: rgb(91, 192, 222);
+    border-radius: 5px;
+    display: block;
+}

@@ -56,10 +56,22 @@ app.post('/api/host', api.createHost);
 
 // Message API
 app.get('/api/messages', api.getMessages);
-app.delete('/api/message/:id', api.deleteMessage);
 app.get('/api/message/:id', api.getMessage);
+app.delete('/api/message/:id', api.deleteMessage);
 app.put('/api/message', api.updateMessage);
 app.post('/api/message', api.createMessage);
+
+// VarSet API
+app.get('/api/varsets', api.getVarSets);
+app.delete('/api/varset/:id', api.deleteVarSet);
+app.put('/api/varset', api.updateVarSet);
+app.post('/api/varset', api.createVarSet);
+  
+//Metadata API
+app.get('/api/meta/tags', api.getAllTags);
+app.get('/api/meta/ris', api.getAllRIs);
+app.get('/api/meta/plas', api.getAllPLAs);
+
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
 

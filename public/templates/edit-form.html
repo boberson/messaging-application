@@ -9,21 +9,24 @@ and open the template in the editor.
       <button type="button" class="close" ng-click="cancel()">&times;</button>
       <h4 class="modal-title">{{modalTitle}}</h4>
     </div>
-    <div class="modal-body container-int">
-      <div class="message">Name:<br/>
-        <input type="text" ng-model="message.name" class="msgfld" capitalize/><br/>Message:<br/>
-        <textarea ng-model="message.text" class="msgbody" capitalize></textarea><br/><br/>
-      </div>
-      <div class="tags">Add Tag:<br/>
-        <input type="text" ng-model="message.newtag" ng-keypress="keypressed($event)" capitalize/><br/>Tags:<br/>
-        <div class="msgtags">
-          <div ng-repeat="tag in message.tags" class="tag">{{tag}}<span style="margin-left: 1px;" ng-click="removeTag(tag)" class="close">x</span></div>
+    <form name='form' class='css-form' novalidate>
+      <div class="modal-body container-int">
+        <div class="message">Name: <span ng-show='form.mName.$error.required' style='font-weight: bold; color: red;'>Name is required!</span><br/>
+          <input type="text" ng-model="message.name" name="mName" class="msgfld" capitalize required/><br/>
+          Message: <span ng-show='form.mBody.$error.required' style='font-weight: bold; color: red;'>Message is required!</span><br/>
+          <textarea ng-model="message.text" name="mBody" class="msgbody" capitalize required></textarea><br/><br/>
+        </div>
+        <div class="tags">Add Tag:<br/>
+          <input type="text" ng-model="other.newtag" typeahead='t for t in tagNames | filter:$viewValue' ng-keypress="keypressed($event)" capitalize/><br/>Tags:<br/>
+          <div class="msgtags">
+            <div ng-repeat="tag in message.tags" style="font-size:{{getTagSize(tag)}}" class="tag">{{tag}}<span style="margin-left: 1px;" ng-click="removeTag(tag)" class="close">&times;</span></div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary" ng-click="save(message)">Save</button>
-      <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
-    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-disabled="form.$invalid || !changed(message)" ng-click="save(message)">Save</button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+      </div>
+    </form>
   </div><!-- /.modal-content -->
 
