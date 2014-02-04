@@ -1,4 +1,12 @@
 /* app css stylesheet */
+
+ul.ma-nav > li.active > a{
+  background-color: #6BA6D1;
+  border-radius: 3px;
+}
+ul.ma-nav > li.active > a:hover {
+  background-color: #8DB9D9;
+}
 .my-modal-content {
   width: 950px;
   height: 700px;

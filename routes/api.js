@@ -8,6 +8,7 @@ var VarSet = messaging.model.VarSet;
 var url = require('url');
 var fs = require('fs');
 var EasyZip = require('easy-zip').EasyZip;
+var EmailService = require("../services/EmailService");
 
 
 var validateMessage = function(message, newMsg) {
@@ -298,7 +299,7 @@ exports.getAllRIs = function(req, res) {
  * Generate API
  */
 
-var rmrf = function(path) {
+function rmrf(path) {
     var files = [];
     if( fs.existsSync(path) ) {
         files = fs.readdirSync(path);
@@ -394,6 +395,14 @@ exports.submitMsgs = function(req, res) {
   
   if(data.email) {
     data.hosts = req.body.hosts;
+    var msgs = messages.map(function(elt) {
+      return elt.message;
+    });
+    for( var idx in data.hosts) {
+      EmailService.emailMessages(data.hosts[idx].name, data.hosts[idx].email, "MsgDb <msgdb@test.com>", msgs, 3000);
+      console.log("Sent Email To: " + data.hosts[idx].alias);
+    }
+    res.jsonp(200, {"status": "success"});
   } else {
     uploadMessages(messages, res);
   };

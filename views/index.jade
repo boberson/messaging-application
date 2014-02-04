@@ -2,7 +2,7 @@ extends layout
 
 block body
   .navbar(role="navigation", ng-controller="HeaderCtrl")
-      ul.nav.nav-tabs.nav-justified.navbar-default
+      ul.ma-nav.nav.nav-tabs.nav-justified.navbar-default
         li(ng-class="{'active': isActive('/message')}")
           a(href="message") Messages
         li(ng-class="{'active': isActive('/var')}")

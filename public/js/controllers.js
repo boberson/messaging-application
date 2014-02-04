@@ -12,16 +12,6 @@ function MessageCtrl($scope, MessageService, Message, $modal) {
   $scope.message.messages;
   $scope.message.searchText = "";
   getMessages();
-  updateStatus();
-  
-  function updateStatus() {
-    $scope.message.status = MessageService.status;  
-    if($scope.message.status.length > 0) {
-      $scope.message.displayStatus = "panel panel-lg panel-danger";
-    } else {
-      $scope.message.displayStatus = "status-invisible";
-    }
-  }
   
   $scope.refresh = function() {
     getMessages();
