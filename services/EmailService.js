@@ -5,6 +5,41 @@
  */
 
 var email = require('../node_modules/emailjs/email');
+var EventEmitter = require('events').EventEmitter;
+/**
+ * host = smtp host
+ * message = from, to, text
+ */
+Emailer = function() {
+  EventEmitter.call(this);
+  this.continue = true;
+  
+};
+Email.prototype = Object.create(EventEmitter.prototype);
+
+Email.prototype.on('kill', function(){
+  this.continue = false;
+});
+
+Emailer.prototype.on('emailSent', function())
+
+
+var SmtpManager = function() {
+  var pid = 0;
+  this.process = [];
+  this.createNewEmailer = function(host, to, from, messages) {
+    pid += 1;
+    var m = new Emailer(host, to, from, messages)
+    this.process[pid] = {
+      mailer: m,
+      total: messages.length,
+      complete: 0,
+      host: host,
+      messages: messages
+    };    
+  }
+}
+
 
 // Email  an array of messages to a host.
 exports.emailMessages = function(host, addressee, addresser, messages, delayInMillis) {
@@ -13,19 +48,22 @@ exports.emailMessages = function(host, addressee, addresser, messages, delayInMi
   message = {};
   message.from = addresser;
   message.to = addressee;
-  var processes = [];
+  this.processes = [];
+  this.numMessages = messages.length;
+  this.numComplete = 0;
   
   function sendMessage(msg) {
     connection.send(msg,function(err,rst){
+      this.numComplete += 1;
       if(err) {
         console.log("Error: " + err);
       } else {
         console.log("Success: " + rst);
       };
-    });
-    
+    });    
   }
-  function sendMessages(msgs) {
+  
+  this.sendMessages = function(msgs) {
     m = msgs.pop()
     if(m) {
       tv = setTimeout(function(){
@@ -33,11 +71,10 @@ exports.emailMessages = function(host, addressee, addresser, messages, delayInMi
         sendMessage(message);
         sendMessages(msgs);
       }, delayInMillis);
-      processes.push(tv);
+      this.processes.push(tv);
     } 
   }
   sendMessages(messages)
-  console.log("AFTER SEND MESSAGES");
 }
 
 
