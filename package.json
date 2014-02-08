@@ -8,6 +8,7 @@
                 "mongodb": "*",
                 "mongoose": "*",
                 "emailjs": "~0.3.6",
-                "easy-zip": "*"
+                "easy-zip": "*",
+                "node-uuid": "*"
 	}
 }

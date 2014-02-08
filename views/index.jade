@@ -10,7 +10,9 @@ block body
         li(ng-class="{'active': isActive('/host')}")
           a(href="host") Host Database
         li(ng-class="{'active': isActive('/generate')}")
-          a(href="generate") Generate        
+          a(href="generate") Generate
+        li(ng-class="{'active': isActive('/process')}")
+          a(href="process") Process Management
   .container      
     div(ng-view) 
 

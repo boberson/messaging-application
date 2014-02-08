@@ -1,4 +1,7 @@
 /* app css stylesheet */
+.ma-cap {
+  text-transform: uppercase;
+}
 
 ul.ma-nav > li.active > a{
   background-color: #6BA6D1;

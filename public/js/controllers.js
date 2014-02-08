@@ -190,6 +190,11 @@ function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title
       $scope.message.tags = new Array();
   };  
   $scope.save = function(msg) {
+    msg.name = msg.name.toUpperCase();
+    msg.text = msg.text.toUpperCase();
+    msg.tags = msg.tags.map(function(single) {
+      return single.toUpperCase();
+    });
     saveMessage(msg, $modalInstance.close);   
     
   };
@@ -213,7 +218,7 @@ function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title
 
   $scope.addTag = function() {
     if($scope.message.tags.indexOf($scope.other.newtag) < 0 && $scope.other.newtag.trim() !== ""){
-      $scope.message.tags.push($scope.other.newtag.trim());
+      $scope.message.tags.push($scope.other.newtag.trim().toUpperCase());
     };
     $scope.other.newtag = "";
   };
@@ -607,26 +612,76 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
   
   $scope.generateAction = function() {
     var data = {};
-    var submitUrl = "/api/submit"
+    var submitUrl = "/api/submit";
     data.email = $scope.generate.se;
     data.hosts = new Array();
     if(data.email) {
-      data.hosts = $scope.generate.hosts.filter(isSelected); 
+      data.hosts = $scope.generate.hosts.filter(isSelected);
+      if($scope.generate.timeout && $scope.generate.timeout > 0) {
+        data.timeout = $scope.generate.timeout;
+      } else {
+        data.timeout = 1;
+      };
+
     }
     data.messages = $scope.generate.messages.filter(isSelected);
     data.varset = $scope.generate.varset;
-    $http({url: submitUrl, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){
-      console.log("Hooray!");
-      console.log(data);
-      console.log(status);
-    }).error(function(data, status, headers, config){
-      console.log("Suck : (");
-      console.log(data);
-      console.log(status);
-    });
-    
-  }
-  
+    $http({url: submitUrl, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){ }).error(function(data, status, headers, config){ });    
+  };  
 };
 GenerateCtrl.$inject = ['$scope', '$filter', '$http', 'MessageService', 'HostService', 'VarService'];
 
+function ProcessCtrl($scope, $timeout, $location, ProcessService) {
+  $scope.processes = [];
+  getProcesses();
+  areProcesses();
+  
+  function areProcesses() {
+    $scope.processExists =  $scope.processes.length > 0;
+  };
+  
+  $scope.getPercentage = function(proc) {
+    return 100 * (proc.completed / proc.total);
+  };
+  
+  $scope.kill = function(process) {
+    var warning = "Are you sure you want to stop sending to:\n"+process.to;
+    var pid = process.pid;
+    if(window.confirm(warning)) {
+      killProcess(pid);
+    };    
+  };
+  
+  function killProcess(pid) {
+    ProcessService.killProcess(pid).
+    success(function(data){
+    }).
+    error(function(data){
+      console.log(data);
+    });
+  }; 
+  
+  function getProcesses() {
+    ProcessService.getProcesses().
+    success(function(data){
+      if(data) {
+        $scope.processes = data;
+      }
+    }).
+    error(function(data){
+      console.log(data);
+    });
+  };
+  function isActive() {
+        return '/process' === $location.path();
+  };
+  function tick() {
+    getProcesses();
+    areProcesses();
+    if(isActive()) {
+      $timeout(tick, 1000);
+    }
+  };
+  tick();
+};
+ProcessCtrl.$inject = ['$scope', '$timeout', '$location', 'ProcessService'];

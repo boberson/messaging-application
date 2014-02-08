@@ -2,6 +2,10 @@
   input#email(type='checkbox', ng-model='generate.se') 
   span.ma Email
   span.ma-btn.btn.btn-primary.btn-sm(ng-click='generateAction()', ng-disabled='!generateButtonEnabled()', style='margin-bottom:5px;') {{ generateBtnText }}
+  br
+  span(ng-class='{hidden: !generate.se}')
+    span.ma Delay in Seconds:
+    input(type='number', value="1", min="1", max="3600", ng-model="generate.timeout") 
   accordion(close-others="oneAtATime")
     accordion-group(is-open="isopen.msgs")
       accordion-heading Messages

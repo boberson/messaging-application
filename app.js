@@ -72,6 +72,10 @@ app.get('/api/meta/tags', api.getAllTags);
 app.get('/api/meta/ris', api.getAllRIs);
 app.get('/api/meta/plas', api.getAllPLAs);
 
+//Process API
+app.get('/api/processes', api.getProcesses);
+app.post('/api/processes/kill/:pid', api.killProcess);
+
 //Generate API
 app.post('/api/submit', api.submitMsgs);
 

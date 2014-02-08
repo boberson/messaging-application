@@ -13,8 +13,7 @@
         tr(ng-repeat='message in message.messages | filter:message.searchText track by message._id')
           td(ng-click='editMessage(message)') {{message.name}}
           td(style='width:300px;', ng-click='editMessage(message)') {{ message.tags.join(',') }}
-          td(style='width: 200px;')
-            span.ma-btn.btn.btn-primary(ng-click='editMessage(message)') Edit
+          td(style='width: 50px;')
             span.ma-btn.btn.btn-danger(style='margin-left: 2px;', ng-click='delete(message)') Delete
 
 

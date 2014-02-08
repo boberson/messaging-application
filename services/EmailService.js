@@ -5,76 +5,92 @@
  */
 
 var email = require('../node_modules/emailjs/email');
+var uuid = require('../node_modules/node-uuid/uuid');
 var EventEmitter = require('events').EventEmitter;
-/**
- * host = smtp host
- * message = from, to, text
- */
-Emailer = function() {
-  EventEmitter.call(this);
-  this.continue = true;
-  
-};
-Email.prototype = Object.create(EventEmitter.prototype);
 
-Email.prototype.on('kill', function(){
-  this.continue = false;
+var Emailer = function() {
+  EventEmitter.call(this);
+  //Map all of the messages into message objects ready to send from emailjs.
+  this.procs = new Array();
+  this.intervals = {};
+  this.getActiveProcesses = function() {
+    return this.procs.filter(function(e, i, arr) {
+      return e.active;
+    });
+  };
+  this.getProcess = function(pid) {
+    var process = this.procs.filter(function(e, i, arr) {
+      return e.pid === pid;
+    });
+    if (process.length > 0) {
+      return process[0];
+    } else {
+      return false;
+    }
+    ;
+  };
+  this.kill = function(pid) {
+    var proc = this.getProcess(pid);
+    if (proc) {
+      proc.active = false;
+      clearInterval(this.intervals[pid]);
+      this.procs.splice(this.procs.indexOf(proc), 1);
+    }
+    ;
+  };
+  this.updateMessageSent = function(pid) {
+    var proc = this.getProcess(pid);
+    if (proc) {
+      proc.completed += 1;
+    }
+  };
+};
+Emailer.prototype = Object.create(EventEmitter.prototype);
+
+Emailer.createNew = function(host, emails, interval, em) {
+  function sendMessage() {
+    msg = emails.pop();
+    if (msg) {
+      email.server.connect({host: host}).send(msg, function(err, rst) {
+        em.emit('updateSent', pid);
+        if (err) {
+          console.log("Error: " + err);
+        }
+        ;
+      });
+    } else {
+      em.emit('kill', pid);
+    }
+    ;
+  }
+  ;
+  if (emails.length > 0) {
+    var pid = uuid.v1();
+    var intervalId = setInterval(sendMessage.bind(host, emails, pid), interval);
+    em.intervals[pid] = intervalId;
+    var process = {};
+    process.pid = pid;
+    process.completed = 0;
+    process.total = emails.length;
+    process.to = emails[0].to;
+    process.host = host;
+    process.active = true;
+    em.procs.push(process);
+  } else {
+    console.log("Error no emails to send");
+  }
+  ;
+};
+
+Emailer.prototype.on('updateSent', function(pid) {
+  this.updateMessageSent(pid);
+});
+Emailer.prototype.on('kill', function(pid) {
+  this.kill(pid);
 });
 
-Emailer.prototype.on('emailSent', function())
 
 
-var SmtpManager = function() {
-  var pid = 0;
-  this.process = [];
-  this.createNewEmailer = function(host, to, from, messages) {
-    pid += 1;
-    var m = new Emailer(host, to, from, messages)
-    this.process[pid] = {
-      mailer: m,
-      total: messages.length,
-      complete: 0,
-      host: host,
-      messages: messages
-    };    
-  }
-}
-
-
-// Email  an array of messages to a host.
-exports.emailMessages = function(host, addressee, addresser, messages, delayInMillis) {
-  var connection = email.server.connect({ host: host });
-  var delay,
-  message = {};
-  message.from = addresser;
-  message.to = addressee;
-  this.processes = [];
-  this.numMessages = messages.length;
-  this.numComplete = 0;
-  
-  function sendMessage(msg) {
-    connection.send(msg,function(err,rst){
-      this.numComplete += 1;
-      if(err) {
-        console.log("Error: " + err);
-      } else {
-        console.log("Success: " + rst);
-      };
-    });    
-  }
-  
-  this.sendMessages = function(msgs) {
-    m = msgs.pop()
-    if(m) {
-      tv = setTimeout(function(){
-        message.text = m;
-        sendMessage(message);
-        sendMessages(msgs);
-      }, delayInMillis);
-      this.processes.push(tv);
-    } 
-  }
-  sendMessages(messages)
-}
+exports.EmailerManager = Emailer;
 
 

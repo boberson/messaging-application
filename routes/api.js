@@ -9,6 +9,8 @@ var url = require('url');
 var fs = require('fs');
 var EasyZip = require('easy-zip').EasyZip;
 var EmailService = require("../services/EmailService");
+var EmailerManager = EmailService.EmailerManager;
+var em = new EmailerManager();
 
 
 var validateMessage = function(message, newMsg) {
@@ -348,7 +350,7 @@ function processMessages(msgTmpls, varset) {
   };
   function getDTG(date) {
     var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-    var dtg = pad(date.getDate(),2) + pad(date.getHours(),2) + pad(date.getMinutes(),2) + "Z " + months[date.getMonth()] + " " + date.getFullYear().toString().slice(2); ;
+    return pad(date.getDate(),2) + pad(date.getHours(),2) + pad(date.getMinutes(),2) + "Z " + months[date.getMonth()] + " " + date.getFullYear().toString().slice(2); ;
   };
   function getParams(varset) {
     var params = {};
@@ -386,24 +388,48 @@ function processMessages(msgTmpls, varset) {
   return messages;
 };
 
+function createEmails(to, from, messages) {
+  return messages.map(function(msgText) {
+    var msg = {};
+    msg.to = to;
+    msg.from = from;
+    msg.text = msgText;
+    return msg;
+  })
+}
+
+// post /api/submit
 exports.submitMsgs = function(req, res) {
   var data = {};
-  data.email = req.body.email;
+  
   data.messageTemplates = req.body.messages;
   data.varset = req.body.varset;
   var messages = processMessages(data.messageTemplates, data.varset);
-  
+  data.email = req.body.email;
   if(data.email) {
+    data.timeout = req.body.timeout * 1000;
     data.hosts = req.body.hosts;
     var msgs = messages.map(function(elt) {
       return elt.message;
     });
     for( var idx in data.hosts) {
-      EmailService.emailMessages(data.hosts[idx].name, data.hosts[idx].email, "MsgDb <msgdb@test.com>", msgs, 3000);
-      console.log("Sent Email To: " + data.hosts[idx].alias);
+      var emails = createEmails(data.hosts[idx].email, "msgdb@msg.lab", msgs);
+      EmailerManager.createNew(data.hosts[idx].name, emails, data.timeout, em);
     }
     res.jsonp(200, {"status": "success"});
   } else {
     uploadMessages(messages, res);
   };
+};
+// get /api/processes
+exports.getProcesses = function(req, res) {
+  var result = em.getActiveProcesses();
+  //res.jsonp(200, result);
+  sendJson(200, result, res);
+};
+
+// post /api/processes/kill/:id
+exports.killProcess = function(req, res) {
+  var pid = req.params.pid;
+  em.emit('kill', pid);
 };

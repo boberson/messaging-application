@@ -1,0 +1,20 @@
+.container-int   
+  .message-container
+    span.alert.alert-info(ng-class='{hidden: processExists}') No Email Processes Running
+    .process-cont(ng-class='{hidden: !processExists}')
+      table.ma-table.table.table-striped.table-bordered.table-hover
+          tr
+            th To
+            th Host
+            th Sent / Total
+            th Percent Complete
+            th Actions
+          tr(ng-repeat='process in processes')
+            td(style="width:100px") {{ process.to }}
+            td(style="width:100px") {{ process.host }}
+            td(style="width:150px") {{ process.completed }} / {{ process.total }} 
+            td 
+              progressbar(animate="false", value="getPercentage(process)", type="success")
+                b {{ getPercentage(process) }}%
+            td(style='width: 50px;')
+              span.ma-btn.btn.btn-danger(style='margin-left: 2px;', ng-click='kill(process)') Stop

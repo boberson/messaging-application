@@ -96,6 +96,7 @@ services.factory('VarService',['$http', function($http) {
   
   return varService;
 }]);
+
 services.factory('MetadataService',['$http', function($http) {
   var metaService = {};
   var metaSvcUrl = '/api/meta';
@@ -116,4 +117,17 @@ services.factory('MetadataService',['$http', function($http) {
   
   return metaService;
 
+}]);
+
+services.factory('ProcessService', ['$http', function($http) {
+    var getProcessUrl = '/api/processes';
+    var processService = {};
+    processService.getProcesses = function() {
+      return $http.get(getProcessUrl);
+    };
+    
+    processService.killProcess = function(pid) {
+      return $http.post(getProcessUrl+"/kill/" + pid)
+    };
+    return processService;
 }]);

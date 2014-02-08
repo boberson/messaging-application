@@ -8,6 +8,7 @@ angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','
     $routeProvider.when('/var', {templateUrl: 'partial/var', controller: VarCtrl});
     $routeProvider.when('/host', {templateUrl: 'partial/hostdb', controller: HostCtrl});
     $routeProvider.when('/generate', {templateUrl: 'partial/generate', controller: GenerateCtrl});
+    $routeProvider.when('/process', {templateUrl: 'partial/process', controller: ProcessCtrl});
     $routeProvider.otherwise({redirectTo: '/message'});
     $locationProvider.html5Mode(true);
   }]);
