@@ -9,17 +9,19 @@ and open the template in the editor.
       <button type="button" class="close" ng-click="cancel()">&times;</button>
       <h4 class="modal-title">{{modalTitle}}</h4>
     </div>
-    <div class="modal-body container-int">
-      <span style="padding-left: 26px; padding-right: 26px;" class="ma">Alias:</span>
-      <input type="text" ng-model="hostform.host.alias" class="ma" capitalize/><br/>
-      <span class="ma">SMTP Host:</span>
-      <input type="text" ng-model="hostform.host.name" class="ma"/><br/>
-      <span style="padding-left: 7px; padding-right: 8px;" class="ma">Email Addr:</span>
-      <input type="text" ng-model="hostform.host.email" class="ma"/>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary" ng-click="save(hostform.host)">Save</button>
-      <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
-    </div>
+    <form name='form' class='css-form' novalidate>
+      <div class="modal-body container-int">
+        <span style="padding-left: 26px; padding-right: 26px;" class="ma">Alias:</span>
+        <input type="text" name="alias" ng-model="hostform.host.alias" class="ma" capitalize required/><span ng-show='form.alias.$error.required' style='font-weight: bold; color: red;'>Name is required!</span><br/>
+        <span class="ma">SMTP Host:</span>
+        <input type="text" name="host" ng-model="hostform.host.name" class="ma" required/><span ng-show='form.host.$error.required' style='font-weight: bold; color: red;'>Host is required!</span><br/>
+        <span style="padding-left: 7px; padding-right: 8px;" class="ma">Email Addr:</span>
+        <input type="email" name="email" ng-model="hostform.host.email" class="ma" required/><span ng-show='form.email.$error.required' style='font-weight: bold; color: red;'>Email is required!</span> <span ng-show='form.email.$error.email' style='font-weight: bold; color: red;'>Email is invalid!</span> 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-disabled="form.$invalid || !changed(hostform.host)" ng-click="save(hostform.host)">Save</button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+      </div>
+    </form>
   </div><!-- /.modal-content -->
 

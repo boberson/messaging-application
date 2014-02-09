@@ -41,11 +41,11 @@ exports.createHost = function(req, res) {
   var host = {};
   host.alias = req.body.alias;
   host.name = req.body.name;
-  host.email = req.body.email;
+  host.email = req.body.email; 
   Host.create(host, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
-      res.jsonp(500, {status: err});
+        res.jsonp(404,{status: err});
     } else {
       //console.log("Created Host: " + msg);
       res.jsonp(200, {status: "success"});
@@ -64,7 +64,7 @@ exports.updateHost = function(req, res) {
     Host.findOneAndUpdate({ _id: id }, host, { upsert: true }, function(err, msg) {
       if(err) {
         //console.log("Creation Error: " + err);
-        res.jsonp(500,{status: err});
+        res.jsonp(404,{status: err});
       } else {
         //console.log("Updated Host: " + msg);
         res.jsonp(200,{status: "success"});
@@ -77,7 +77,7 @@ exports.deleteHost = function(req, res) {
   Host.findByIdAndRemove(id, function(err, msg) {
     if(err) {
       //console.log("Deletion Error: " + err);
-      res.jsonp(500,{status: err});
+        res.jsonp(404,{status: err});
     } else {
       //console.log("Deleted Host: " + msg);
       res.jsonp(200,{status: "success"});
@@ -118,7 +118,7 @@ exports.createMessage = function(req,res) {
   Message.create(message, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
-      res.jsonp(500,{status: err});
+        res.jsonp(404,{status: err});
     } else {
       //console.log("Created Message: " + msg);
       res.jsonp(200,{status: "success"});
@@ -136,7 +136,7 @@ exports.updateMessage = function(req,res) {
   Message.findOneAndUpdate({ _id: id }, message, { upsert: true }, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
-      res.jsonp(500,{status: err});
+        res.jsonp(404,{status: err});
     } else {
       //console.log("Updated Message: " + msg);
       res.jsonp(200,{status: "success"});
@@ -149,7 +149,7 @@ exports.deleteMessage = function(req,res) {
   Message.findByIdAndRemove(id, function(err, msg) {
     if(err) {
         //console.log("Deletion Error: " + err);
-      res.jsonp(500,{status: err});
+        res.jsonp(404,{status: err});
     } else {
       //console.log("Deleted Message: " + msg);
       res.jsonp(200,{status: "success"});
@@ -185,7 +185,7 @@ exports.createVarSet = function(req, res) {
   VarSet.create(varset, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
-      res.jsonp(500, {status: err});
+      res.jsonp(404, {status: err});
     } else {
       //console.log("Created VarSet: " + msg);
       res.jsonp(200, {status: "success"});
@@ -206,7 +206,7 @@ exports.updateVarSet = function(req, res) {
   VarSet.findOneAndUpdate({ _id: id }, varset, { upsert: true }, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
-      res.jsonp(500, {status: err});
+      res.jsonp(404, {status: err});
     } else {
       //console.log("Created VarSet: " + msg);
       res.jsonp(200, {status: "success"});
@@ -219,7 +219,7 @@ exports.deleteVarSet = function(req, res) {
   VarSet.findByIdAndRemove(id, function(err, msg) {
     if(err) {
       //console.log("Deletion Error: " + err);
-      res.jsonp(500,{status: err});
+      res.jsonp(404,{status: err});
     } else {
       //console.log("Deleted VarSet: " + msg);
       res.jsonp(200,{status: "success"});
@@ -244,7 +244,7 @@ exports.getAllTags = function (req, res) {
   };
   Message.mapReduce(mr, function(err, result) {
       if(err) {
-        res.jsonp(500, {"error": err});
+        res.jsonp(404, {"error": err});
       } else {
         //res.json(result);
         sendJson(200, result, res);
@@ -268,7 +268,7 @@ exports.getAllPLAs = function(req, res) {
   };
   VarSet.mapReduce(mr, function(err, result) {
       if(err) {
-        res.jsonp(500, {"error": err});
+        res.jsonp(404, {"error": err});
       } else {
         //res.json(result);
         sendJson(200, result, res);
@@ -289,7 +289,7 @@ exports.getAllRIs = function(req, res) {
   };
   VarSet.mapReduce(mr, function(err, result) {
       if(err) {
-        res.jsonp(500, {"error": err});
+        res.jsonp(404, {"error": err});
       } else {
         //res.json(result);
         sendJson(200, result, res);

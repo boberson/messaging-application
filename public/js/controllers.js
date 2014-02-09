@@ -6,13 +6,22 @@ function HeaderCtrl($scope, $location) {
         return viewLocation === $location.path();
   };
 }
+function AlertCtrl($scope, AlertService) {
+  $scope.alerts = AlertService.alerts;
+  $scope.closeAlert = function(index) {
+    $scope.alerts.splice(index,1);
+  };
+};
+AlertCtrl.$inject = ['$scope', 'AlertService'];
 
-function MessageCtrl($scope, MessageService, Message, $modal) {
+function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
   $scope.message = {};
   $scope.message.messages;
   $scope.message.searchText = "";
   getMessages();
-  
+  var errorCb = function(data) {
+    AlertService.addAlert("danger", "Error:\n" + data.message);
+  };
   $scope.refresh = function() {
     getMessages();
   };
@@ -22,6 +31,7 @@ function MessageCtrl($scope, MessageService, Message, $modal) {
     var id = message._id;
     if(window.confirm(warning)) {
       deleteMessage(id);
+      AlertService.addAlert("warning", "Deleted Message\n" + message.name);
     };    
   };
   
@@ -30,9 +40,7 @@ function MessageCtrl($scope, MessageService, Message, $modal) {
     success(function(data) {
       getMessages();
     }).
-    error(function(data) {
-      $scope.message.status = "Error getting messages: " + data.message;
-    });
+    error(errorCb);
   };  
   
   function getMessages() {
@@ -40,21 +48,19 @@ function MessageCtrl($scope, MessageService, Message, $modal) {
     success(function(data) {
       $scope.message.messages = data;
     }).
-    error(function(data) {
-      $scope.message.status = "Error getting messages: " + data.message;
-    });
+    error(errorCb);
   };
   
   function createMessage(msg, cb) {
     MessageService.createMessage(msg).
     success(function(data) {
-      MessageService.status = "Successfully Created Message: "+msg.name;
+      AlertService.addAlert("success", "Successfully Created Message:\n"+msg.name);
       if(cb) {
         cb();
       };
     }).
     error(function(data) {
-      $scope.status = "Error getting messages: " + data.message;
+      AlertService.addAlert("danger", "Error:\n"+data.msg);
       if(cb) {
         cb();
       };
@@ -64,13 +70,13 @@ function MessageCtrl($scope, MessageService, Message, $modal) {
   function updateMessage(msg, cb) {
     MessageService.updateMessage(msg).
     success(function(data) {
-      $scope.status = "Successfully Created Message: "+msg.name;
+      AlertService.addAlert("success", "Successfully Updated Message:\n"+msg.name);
       if(cb) {
         cb();
       };
     }).
     error(function(data) {
-      $scope.status = "Error getting messages: " + data.message;
+      AlertService.addAlert("danger", "Error:\n"+data.msg);
       if(cb) {
         cb();
       };
@@ -127,7 +133,7 @@ function MessageCtrl($scope, MessageService, Message, $modal) {
   };
   
 }
-MessageCtrl.$inject = ['$scope', 'MessageService', 'Message', '$modal'];
+MessageCtrl.$inject = ['$scope', 'MessageService', 'Message', '$modal', 'AlertService'];
 
 function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title, saveMessage) {
   $scope.message = message;
@@ -225,10 +231,10 @@ function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title
 }
 MessageFormCtrl.$inject = ['$scope', '$modalInstance', 'MetadataService', 'message', 'title', 'saveMessage'];
 
-function VarCtrl($scope, $modal, VarService) {
+function VarCtrl($scope, $modal, VarService, AlertService) {
   $scope.var = {};
-  var cbSuccess = function(data) { getVarSets(); };
-  var cbFailure = function(data) { console.log(data); };
+  var cbSuccess = function(data) { AlertService.addAlert("success", "Success:\n"+data.msg); getVarSets(); };
+  var cbFailure = function(data) { AlertService.addAlert("danger", "Error:\n"+data.msg); };
   getVarSets();
   
   $scope.delete = function(varset) {
@@ -236,6 +242,8 @@ function VarCtrl($scope, $modal, VarService) {
     var id = varset._id;
     if(window.confirm(warning)) {
       deleteVarSet(id);
+      AlertService.addAlert("warning", "Deleted VarSet\n" + varset.name);
+
     };
   };
   
@@ -248,15 +256,15 @@ function VarCtrl($scope, $modal, VarService) {
   };
   
   function deleteVarSet(id) {
-    VarService.deleteVarSet(id).success(cbSuccess).error(cbFailure);
+    VarService.deleteVarSet(id).success(function(data) { AlertService.addAlert("success", "Success Deleting VarSet:\n"+data.msg); getVarSets(); }).error(cbFailure);
   };
   
   function createVarSet(vs) {
-    VarService.createVarSet(vs).success(cbSuccess).error(cbFailure);
+    VarService.createVarSet(vs).success(function(data) { AlertService.addAlert("success", "Success Creating VarSet:\n"+data.msg); getVarSets(); }).error(cbFailure);
   };
   
   function updateVarSet(vs) {
-    VarService.updateVarSet(vs).success(cbSuccess).error(cbFailure);
+    VarService.updateVarSet(vs).success(function(data) { AlertService.addAlert("success", "Success Updating VarSet:\n"+data.msg); getVarSets(); }).error(cbFailure);
   };
   
   $scope.new = function () {
@@ -287,7 +295,7 @@ function VarCtrl($scope, $modal, VarService) {
     modalInstance.result.then(function () { getVarSets(); }, function () { getVarSets(); });
   };
 }
-VarCtrl.$inject = ['$scope', '$modal', 'VarService'];
+VarCtrl.$inject = ['$scope', '$modal', 'VarService', 'AlertService'];
 
 function VarFormCtrl($scope, $modalInstance, VarService, MetadataService, varSet, title, save) {
   $scope.template = varSet;
@@ -392,7 +400,7 @@ function VarFormCtrl($scope, $modalInstance, VarService, MetadataService, varSet
 }
 VarFormCtrl.$inject = ['$scope', '$modalInstance', 'VarService', 'MetadataService', 'varSet', 'title', 'save'];
 
-function HostCtrl($scope, $location, HostService, $modal) {
+function HostCtrl($scope, $location, HostService, $modal, AlertService) {
   $scope.hostdb = {};
   $scope.hostdb.hosts = new Array();
   getHosts();
@@ -400,45 +408,52 @@ function HostCtrl($scope, $location, HostService, $modal) {
   $scope.refresh = function() {
     getHosts();
   };
-  
+  function processErrorData(data) {
+    var message = "";
+    for(var i in data.status.errors) {
+      message += i + " : " + data.status.errors[i].message+"\n";
+    }
+    return message;
+  }
   $scope.delete = function(host) {
     var warning = "Are you sure you want to delete Host:\n"+host.Alias;
     var id = host._id;
     if(window.confirm(warning)) {
       deleteHost(id);
+      AlertService.addAlert("warning", "Deleted Message\n" + id);
     };
   };
-  
+  function errorCb(data) {
+    AlertService.addAlert("danger", "Error:\n" + data.message);
+  }
   function getHosts() {
     HostService.getHosts().
     success(function(data) {
       $scope.hostdb.hosts = data;
     }).
-    error(function(data) {
-      $scope.hostdb.status = "Error getting messages: " + data.message;
-    });
+    error(errorCb);
   };
   
   function deleteHost(id) {
     HostService.deleteHost(id).
     success(function(data) {
       getHosts();
+      AlertService.addAlert("success", "Successfully Deleted Host: "+id);
     }).
-    error(function(data) {
-      $scope.message.status = "Error getting messages: " + data.message;
-    });
+    error(errorCb);
   };
   
   function createHost(msg, cb) {
     HostService.createHost(msg).
     success(function(data) {
-      HostService.status = "Successfully Created Host: "+msg.name;
+      AlertService.addAlert("success", "Successfully Created Host: "+msg.name);
       if(cb) {
         cb();
       };
     }).
     error(function(data) {
-      $scope.status = "Error getting Hosts: " + data.message;
+      console.log(data);
+      AlertService.addAlert("danger", "Error:\n" + processErrorData(data));
       if(cb) {
         cb();
       };
@@ -448,13 +463,13 @@ function HostCtrl($scope, $location, HostService, $modal) {
   function updateHost(msg, cb) {
     HostService.updateHost(msg).
     success(function(data) {
-      $scope.status = "Successfully Created Host: "+msg.name;
+      AlertService.addAlert("success", "Successfully Updated Host: "+msg.name);
       if(cb) {
         cb();
       };
     }).
     error(function(data) {
-      $scope.status = "Error getting messages: " + data.message;
+      AlertService.addAlert("danger", "Error:\n" + processErrorData(data));
       if(cb) {
         cb();
       };
@@ -508,13 +523,17 @@ function HostCtrl($scope, $location, HostService, $modal) {
     });
   };
 }
-HostCtrl.$inject = ['$scope', '$location', 'HostService', '$modal'];
+HostCtrl.$inject = ['$scope', '$location', 'HostService', '$modal', 'AlertService'];
 
 function HostFormCtrl($scope, HostService, $modalInstance, host, title, save) {
   $scope.hostform = {};
   $scope.hostform.host = host;
   $scope.modalTitle = title;
-  
+  var original = angular.copy(host);
+ 
+  $scope.changed = function(host) {
+    return !angular.equals(host, original);
+  };
   $scope.save = function(h) {   
     save(h,$modalInstance.close);
   };
@@ -525,7 +544,7 @@ function HostFormCtrl($scope, HostService, $modalInstance, host, title, save) {
 }
 HostFormCtrl.$inject = ['$scope', 'HostService', '$modalInstance', 'host', 'title', 'save'];
 
-function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarService) {
+function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarService, AlertService) {
   $scope.generate = {};
   $scope.generate.messages = new Array();
   $scope.generate.hosts = new Array();
@@ -536,6 +555,7 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
   $scope.isopen.msgs = false;
   $scope.isopen.host = false;
   $scope.generate.se = true;
+  $scope.generate.timeout = 1;
   getMessages();
   getHosts();
   getVarSets();
@@ -586,7 +606,7 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
       $scope.generate.messages = data;
     }).
     error(function(data) {
-      $scope.generate.status = "Error getting messages: " + data.message;
+      AlertService.addAlert('warning', "Error getting messages: " + data.message);
     });
   };
   
@@ -596,7 +616,7 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
       $scope.generate.hosts = data;
     }).
     error(function(data){
-      $scope.generate.status = "Error getting hosts: " + data.message;
+      AlertService.addAlert('warning', "Error getting hosts: " + data.message);
     });
   };
   
@@ -606,7 +626,7 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
       $scope.generate.varsets = data;
     }).
     error(function(data){
-      $scope.generate.status = "Error getting varsets: " + data.message;
+      AlertService.addAlert('warning', "Error getting varsets: " + data.message);
     });
   };
   
@@ -626,12 +646,16 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
     }
     data.messages = $scope.generate.messages.filter(isSelected);
     data.varset = $scope.generate.varset;
-    $http({url: submitUrl, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){ }).error(function(data, status, headers, config){ });    
+    $http({url: submitUrl, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){
+      AlertService.addAlert('success', "Success submitting messages");
+    }).error(function(data, status, headers, config){
+      AlertService.addAlert('warning', "Error submitting messages\n"+status);
+    });    
   };  
 };
-GenerateCtrl.$inject = ['$scope', '$filter', '$http', 'MessageService', 'HostService', 'VarService'];
+GenerateCtrl.$inject = ['$scope', '$filter', '$http', 'MessageService', 'HostService', 'VarService', 'AlertService'];
 
-function ProcessCtrl($scope, $timeout, $location, ProcessService) {
+function ProcessCtrl($scope, $timeout, $location, ProcessService, AlertService) {
   $scope.processes = [];
   getProcesses();
   areProcesses();
@@ -649,6 +673,7 @@ function ProcessCtrl($scope, $timeout, $location, ProcessService) {
     var pid = process.pid;
     if(window.confirm(warning)) {
       killProcess(pid);
+      AlertService.addAlert('warning', 'Process Stopped \n' + pid);
     };    
   };
   
@@ -657,7 +682,7 @@ function ProcessCtrl($scope, $timeout, $location, ProcessService) {
     success(function(data){
     }).
     error(function(data){
-      console.log(data);
+      AlertService.addAlert('warning', "Error Stopping Process\n"+pid);
     });
   }; 
   
@@ -684,4 +709,4 @@ function ProcessCtrl($scope, $timeout, $location, ProcessService) {
   };
   tick();
 };
-ProcessCtrl.$inject = ['$scope', '$timeout', '$location', 'ProcessService'];
+ProcessCtrl.$inject = ['$scope', '$timeout', '$location', 'ProcessService', 'AlertService'];

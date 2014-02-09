@@ -127,7 +127,23 @@ services.factory('ProcessService', ['$http', function($http) {
     };
     
     processService.killProcess = function(pid) {
-      return $http.post(getProcessUrl+"/kill/" + pid)
+      return $http.post(getProcessUrl+"/kill/" + pid);
     };
     return processService;
+}]);
+
+services.factory('AlertService', ['$timeout', function($timeout) {
+    var alertService = {};
+    alertService.alerts = new Array();
+    
+    // Alert type can be info, success, warning, or danger.
+    alertService.addAlert = function(alertType, alertMessage) {
+      var alt = {type: alertType, msg: alertMessage};
+      alertService.alerts.push(alt);
+      $timeout(function(){
+        alertService.alerts.splice(alertService.alerts.lastIndexOf(alt), 1);
+      },2500);
+    };
+    
+    return alertService;
 }]);

@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-var http = require('http');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var validators = require('./Validators').validators;
 exports.model = {};
 
 
@@ -20,21 +20,29 @@ var db = mongoose.connect(uristring, function (err, res) {
   };
 });
 
-exports.model.hostSchema = new Schema({
-  name: String,
-  email: String,
-  alias: String
+var schemas = {};
+var validateEmail = [validators.email, "Must be a valid email address."];
+schemas.hostSchema = new Schema({
+  name: { type: String, require: "Hostname is required" },
+  email: {type: String, required: "Email address is required", validate: validateEmail},
+  alias: {type: String, required: "Name of Host entry required" }
 });
 
-exports.model.messageSchema = new Schema({
-  name: String,
-  description: String,
-  text: String,
+var validateName = [ validators.alphanum, "Name must be alpha numeric."];
+schemas.messageSchema = new Schema({
+  name: { 
+    type: String, 
+    required: "Name is required", 
+    validate: validateName
+  },
+  description: { type: String },
+  text: { type: String, required: "Message text is required" },
   tags: [String],
-  created: { type: Date, default: Date.now } 
+  created: { type: Date, default: Date.now },
+  updated: { type: Date }
 });
 
-exports.model.varSetSchema = new Schema({
+schemas.varSetSchema = new Schema({
   name: String,
   osri: String,
   dri: [String],
@@ -44,11 +52,11 @@ exports.model.varSetSchema = new Schema({
   dtg: { type: Date }
 });
 
-exports.model.VarSet = mongoose.model('VarSet', exports.model.varSetSchema);
+exports.model.VarSet = mongoose.model('VarSet', schemas.varSetSchema);
 
-exports.model.Message = mongoose.model('Message', exports.model.messageSchema);
+exports.model.Message = mongoose.model('Message', schemas.messageSchema);
 
-exports.model.Host = mongoose.model('Host', exports.model.hostSchema);
+exports.model.Host = mongoose.model('Host', schemas.hostSchema);
 
 
 

@@ -1,8 +1,26 @@
 /* app css stylesheet */
+.container {
+  position: relative;
+}
 .ma-cap {
   text-transform: uppercase;
 }
-
+.alerts-container {
+  position: absolute;
+  top: 30px;
+  left: 80%;
+  margin-bottom: 5px;
+  float:left;
+  z-index: 999;
+}
+.ma-alert {
+  position: relative;
+  display: block;
+  float: bottom;
+  right: 20px;
+  width: 300px;
+  margin: 5px;
+}
 ul.ma-nav > li.active > a{
   background-color: #6BA6D1;
   border-radius: 3px;
