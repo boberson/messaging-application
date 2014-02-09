@@ -21,6 +21,10 @@ and open the template in the editor.
           <div class="msgtags">
             <div ng-repeat="tag in message.tags" style="font-size:{{getTagSize(tag)}}" class="tag">{{tag}}<span style="margin-left: 1px;" ng-click="removeTag(tag)" class="close">&times;</span></div>
           </div>
+          <div class="msgdescr-cont">
+            Description:
+            <textarea ng-model="message.description" class="msgdescr"></textarea>
+          </div>
         </div>
       </div>
       <div class="modal-footer">

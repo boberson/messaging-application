@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 
-var messaging = require('./messaging');
-var Message = messaging.model.Message;
+var Database = require('./Database');
+var Message = Database.model.Message;
 
 var msg1 = {};
 msg1.name = "ROUTINE UNCLAS MESSAGE";

@@ -31,7 +31,6 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
     var id = message._id;
     if(window.confirm(warning)) {
       deleteMessage(id);
-      AlertService.addAlert("warning", "Deleted Message\n" + message.name);
     };    
   };
   
@@ -39,6 +38,7 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
     MessageService.deleteMessage(id).
     success(function(data) {
       getMessages();
+      AlertService.addAlert("warning", "Successfully Deleted Message\n" + message.name);
     }).
     error(errorCb);
   };  
@@ -242,8 +242,6 @@ function VarCtrl($scope, $modal, VarService, AlertService) {
     var id = varset._id;
     if(window.confirm(warning)) {
       deleteVarSet(id);
-      AlertService.addAlert("warning", "Deleted VarSet\n" + varset.name);
-
     };
   };
   
@@ -420,7 +418,6 @@ function HostCtrl($scope, $location, HostService, $modal, AlertService) {
     var id = host._id;
     if(window.confirm(warning)) {
       deleteHost(id);
-      AlertService.addAlert("warning", "Deleted Message\n" + id);
     };
   };
   function errorCb(data) {
@@ -439,8 +436,7 @@ function HostCtrl($scope, $location, HostService, $modal, AlertService) {
     success(function(data) {
       getHosts();
       AlertService.addAlert("success", "Successfully Deleted Host: "+id);
-    }).
-    error(errorCb);
+    }).error(errorCb);
   };
   
   function createHost(msg, cb) {
@@ -544,7 +540,7 @@ function HostFormCtrl($scope, HostService, $modalInstance, host, title, save) {
 }
 HostFormCtrl.$inject = ['$scope', 'HostService', '$modalInstance', 'host', 'title', 'save'];
 
-function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarService, AlertService) {
+function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarService, AlertService, $window) {
   $scope.generate = {};
   $scope.generate.messages = new Array();
   $scope.generate.hosts = new Array();
@@ -554,7 +550,8 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
   $scope.isopen.var = false;
   $scope.isopen.msgs = false;
   $scope.isopen.host = false;
-  $scope.generate.se = true;
+  $scope.generate.se = true;  
+  $scope.hidedownload = true;
   $scope.generate.timeout = 1;
   getMessages();
   getHosts();
@@ -581,7 +578,7 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
   };
   
   $scope.$watch('generate.se', function(newvalue, oldvalue) {
-    $scope.generateBtnText = newvalue ? 'Send Email' : 'Download';
+    $scope.generateBtnText = newvalue ? 'Send Email' : 'Generate';
   });
   
   $scope.$watch('generate.selectAllMsgs', function(newvalue, oldvalue) {
@@ -632,28 +629,40 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
   
   $scope.generateAction = function() {
     var data = {};
-    var submitUrl = "/api/submit";
-    data.email = $scope.generate.se;
-    data.hosts = new Array();
-    if(data.email) {
+    var submitUrl = "/api/submit";    
+    data.messages = $scope.generate.messages.filter(isSelected);
+    data.varset = $scope.generate.varset;
+    
+    if($scope.generate.se) {
+      data.hosts = new Array();
+      var url = submitUrl + "/email";
       data.hosts = $scope.generate.hosts.filter(isSelected);
       if($scope.generate.timeout && $scope.generate.timeout > 0) {
         data.timeout = $scope.generate.timeout;
       } else {
         data.timeout = 1;
       };
-
-    }
-    data.messages = $scope.generate.messages.filter(isSelected);
-    data.varset = $scope.generate.varset;
-    $http({url: submitUrl, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){
-      AlertService.addAlert('success', "Success submitting messages");
-    }).error(function(data, status, headers, config){
-      AlertService.addAlert('warning', "Error submitting messages\n"+status);
-    });    
+      $http({url: url, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){
+        AlertService.addAlert('success', "Success submitting messages to email. You can monitor the process on the processes tab.");
+      }).error(function(data, status, headers, config){
+        AlertService.addAlert('warning', "Error submitting messages\n"+status);
+      });
+    } else {
+      // submit a post with the messages and varset then open a new window with the download url
+      var url = submitUrl + "/download" ;
+      var downloadUrl = "/api/download/";
+      $http({url: url, data: JSON.stringify(data), method: "POST"}).success(function(data, status, headers, config){
+        AlertService.addAlert('success', "Success submitting for download. Please click the 'Download Generated Messages' button to download them.");
+        console.log(data);
+        $scope.downloadLink = downloadUrl + data.filename;
+        $scope.hidedownload = false;
+      }).error(function(data, status, headers, config){
+        AlertService.addAlert('warning', "Error submitting messages\n"+status);
+      }); 
+    };       
   };  
 };
-GenerateCtrl.$inject = ['$scope', '$filter', '$http', 'MessageService', 'HostService', 'VarService', 'AlertService'];
+GenerateCtrl.$inject = ['$scope', '$filter', '$http', 'MessageService', 'HostService', 'VarService', 'AlertService', '$window'];
 
 function ProcessCtrl($scope, $timeout, $location, ProcessService, AlertService) {
   $scope.processes = [];

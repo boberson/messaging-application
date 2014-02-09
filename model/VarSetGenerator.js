@@ -5,8 +5,8 @@
  */
 
 
-var messaging = require('./messaging');
-var VarSet = messaging.model.VarSet;
+var Database = require('./Database');
+var VarSet = Database.model.VarSet;
 
 var varset = {};
 varset.name = "DEFAULT ONE";

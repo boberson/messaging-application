@@ -1,10 +1,10 @@
 /*
  * Serve JSON to our AngularJS client
  */
-var messaging = require("../model/messaging");
-var Message = messaging.model.Message;
-var Host = messaging.model.Host;
-var VarSet = messaging.model.VarSet;
+var Database = require("../model/Database");
+var Message = Database.model.Message;
+var Host = Database.model.Host;
+var VarSet = Database.model.VarSet;
 var url = require('url');
 var fs = require('fs');
 var EasyZip = require('easy-zip').EasyZip;
@@ -114,7 +114,8 @@ exports.createMessage = function(req,res) {
   var message = {};
   message.text = req.body.text;
   message.tags = req.body.tags;
-  message.name = req.body.name;  
+  message.name = req.body.name;
+  message.description = req.body.description;
   Message.create(message, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
@@ -132,7 +133,8 @@ exports.updateMessage = function(req,res) {
   var id = req.body._id;
   message.text = req.body.text;
   message.tags = req.body.tags;
-  message.name = req.body.name;  
+  message.name = req.body.name;
+  message.description = req.body.description;
   Message.findOneAndUpdate({ _id: id }, message, { upsert: true }, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
@@ -316,9 +318,11 @@ function rmrf(path) {
         fs.rmdirSync(path);
     }
 };
-function uploadMessages(messages, res) { 
+function uploadMessages(messages) {
+  var downloaddir = "./tmp/";
   var tmpmsgdir = __dirname + "/../tmp/messages/";
-  var zipfname = __dirname + "/../tmp/messages.zip";
+  var zipfilename = 'messages.zip';
+  var zipfname = __dirname + "/../tmp/" + zipfilename;
   var fname, msg;
   rmrf(tmpmsgdir);
   fs.mkdirSync(tmpmsgdir);
@@ -330,11 +334,9 @@ function uploadMessages(messages, res) {
   
   var zip = new EasyZip();
   zip.zipFolder(tmpmsgdir,function(){
-    zip.writeToFile(zipfname);
-    res.download(zipfname);
+    zip.writeToFile(zipfname);    
   });
-  
-  
+  return zipfilename;  
 }
 
 function processMessages(msgTmpls, varset) {
@@ -393,34 +395,37 @@ function createEmails(to, from, messages) {
     var msg = {};
     msg.to = to;
     msg.from = from;
-    msg.text = msgText;
+    msg.text = msgText.message;
     return msg;
-  })
+  });
 }
 
-// post /api/submit
-exports.submitMsgs = function(req, res) {
+// post /api/submit/email
+exports.submitEmail = function (req, res) {
   var data = {};
-  
   data.messageTemplates = req.body.messages;
   data.varset = req.body.varset;
   var messages = processMessages(data.messageTemplates, data.varset);
-  data.email = req.body.email;
-  if(data.email) {
-    data.timeout = req.body.timeout * 1000;
-    data.hosts = req.body.hosts;
-    var msgs = messages.map(function(elt) {
-      return elt.message;
-    });
-    for( var idx in data.hosts) {
-      var emails = createEmails(data.hosts[idx].email, "msgdb@msg.lab", msgs);
-      EmailerManager.createNew(data.hosts[idx].name, emails, data.timeout, em);
-    }
-    res.jsonp(200, {"status": "success"});
-  } else {
-    uploadMessages(messages, res);
-  };
-};
+  data.timeout = req.body.timeout * 1000;
+  data.hosts = req.body.hosts;  
+  for( var idx in data.hosts) {
+    var emails = createEmails(data.hosts[idx].email, "msgdb@msg.lab", messages);
+    EmailerManager.createNew(data.hosts[idx].name, emails, data.timeout, em);
+  }
+  res.jsonp(200, {"status": "success"});
+}
+
+// get /api/submit/download
+exports.submitDownload = function(req,  res) {
+  var data = {};
+  data.messageTemplates = req.body.messages;
+  data.varset = req.body.varset;
+  var messages = processMessages(data.messageTemplates, data.varset);
+  var fn = uploadMessages(messages);
+  res.jsonp(200, {status: "success", filename : fn});
+} 
+
+
 // get /api/processes
 exports.getProcesses = function(req, res) {
   var result = em.getActiveProcesses();
@@ -433,3 +438,11 @@ exports.killProcess = function(req, res) {
   var pid = req.params.pid;
   em.emit('kill', pid);
 };
+
+// get /api/download/:filename to download a messages.zip
+exports.download = function(req, res) {
+  var downloaddir = "./tmp/"
+  var filename = req.params.filename;
+  
+  res.download(downloaddir + filename);
+}

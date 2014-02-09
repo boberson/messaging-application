@@ -142,7 +142,7 @@ services.factory('AlertService', ['$timeout', function($timeout) {
       alertService.alerts.push(alt);
       $timeout(function(){
         alertService.alerts.splice(alertService.alerts.lastIndexOf(alt), 1);
-      },2500);
+      },3500);
     };
     
     return alertService;

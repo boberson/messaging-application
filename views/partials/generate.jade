@@ -2,6 +2,7 @@
   input#email(type='checkbox', ng-model='generate.se') 
   span.ma Email
   span.ma-btn.btn.btn-primary.btn-sm(ng-click='generateAction()', ng-disabled='!generateButtonEnabled()', style='margin-bottom:5px;') {{ generateBtnText }}
+  a.ma-btn.btn.btn-primary.btn-sm(href="{{downloadLink}}", ng-class='{hidden: hidedownload}', target="_self", ng-click="hidedownload = true") Download Generated Messages
   br
   span(ng-class='{hidden: !generate.se}')
     span.ma Delay in Seconds:

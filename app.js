@@ -8,7 +8,7 @@ var express = require('express'),
   api = require('./routes/api'),
   http = require('http'),
   https = require('https'),
-  db = require('./model/messaging'),
+  db = require('./model/Database'),
   fs = require('fs'),
   path = require('path');
 
@@ -77,8 +77,11 @@ app.get('/api/processes', api.getProcesses);
 app.post('/api/processes/kill/:pid', api.killProcess);
 
 //Generate API
-app.post('/api/submit', api.submitMsgs);
+app.post('/api/submit/download', api.submitDownload);
+app.post('/api/submit/email', api.submitEmail);
 
+//route for downloading zip files of messages
+app.get('/api/download/:filename', api.download);
 
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);

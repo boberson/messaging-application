@@ -10,7 +10,7 @@ var validators = require('./Validators').validators;
 exports.model = {};
 
 
-var uristring = 'mongodb://localhost/messaging';
+var uristring = 'mongodb://localhost/MessageDatabase';
 
 var db = mongoose.connect(uristring, function (err, res) {
   if(err) {

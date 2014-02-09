@@ -5,8 +5,8 @@
  */
 
 
-var messaging = require('./messaging');
-var Host = messaging.model.Host;
+var Database = require('./Database');
+var Host = Database.model.Host;
 
 var host1 = {};
 host1.alias = "USS TEST1";

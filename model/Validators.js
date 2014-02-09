@@ -12,7 +12,7 @@ validators.email = function(v) {
 };
 
 validators.alphanum = function(v) {
-  var re = /^[\w,\d]+$/;
+  var re = /^[\w,\d,\s]+$/;
   return re.test(v);
 };
 
