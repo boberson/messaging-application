@@ -29,7 +29,7 @@ ul.ma-nav > li.active > a:hover {
   background-color: #8DB9D9;
 }
 .my-modal-content {
-  width: 950px;
+  width: 1050px;
   height: 700px;
   left: -200px;
 }
@@ -112,18 +112,18 @@ span.ma {
 }
 .message {
     display: block;
-    width: 550px;
+    width: 650px;
     float: left;
     margin-right: 20px;
 }
 .msgfld {
-    width: 550px;
+    width: 650px;
     border-color: black;
     border-width: 1px;
 }
 
 .msgbody {
-    width: 550px;
+    width: 650px;
     height: 450px;
     border-radius: 5px;
 }

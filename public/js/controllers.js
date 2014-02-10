@@ -194,7 +194,10 @@ function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title
   
   if(typeof $scope.message.tags === 'undefined') {
       $scope.message.tags = new Array();
-  };  
+  };
+  if(typeof $scope.message.description === 'undefined') {
+      $scope.message.description = "";
+  }; 
   $scope.save = function(msg) {
     msg.name = msg.name.toUpperCase();
     msg.text = msg.text.toUpperCase();

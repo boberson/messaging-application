@@ -48,10 +48,12 @@ var Emailer = function() {
 Emailer.prototype = Object.create(EventEmitter.prototype);
 
 Emailer.createNew = function(host, emails, interval, em) {
+  var smtpTimeout = 3000;
+  var server = email.server.connect({ host: host, timeout: smtpTimeout });
   function sendMessage() {
     msg = emails.pop();
     if (msg) {
-      email.server.connect({host: host}).send(msg, function(err, rst) {
+      server.send(msg, function(err, rst) {
         em.emit('updateSent', pid);
         if (err) {
           console.log("Error: " + err);

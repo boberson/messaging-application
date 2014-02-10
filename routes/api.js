@@ -115,7 +115,11 @@ exports.createMessage = function(req,res) {
   message.text = req.body.text;
   message.tags = req.body.tags;
   message.name = req.body.name;
-  message.description = req.body.description;
+  if(req.body.description) {
+    message.description = req.body.description;
+  } else {
+    message.description = "";
+  };  
   Message.create(message, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
@@ -134,7 +138,11 @@ exports.updateMessage = function(req,res) {
   message.text = req.body.text;
   message.tags = req.body.tags;
   message.name = req.body.name;
-  message.description = req.body.description;
+  if(req.body.description) {
+    message.description = req.body.description;
+  } else {
+    message.description = "";
+  };  
   Message.findOneAndUpdate({ _id: id }, message, { upsert: true }, function(err, msg) {
     if(err) {
       //console.log("Creation Error: " + err);
