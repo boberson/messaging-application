@@ -7,8 +7,8 @@
   .message-container
     table.ma-table.table.table-striped.table-bordered.table-hover
         tr
-          th Message Title
-          th Tags
+          th(ng-click='sortByName()') Message Title
+          th(ng-click='sortByTags()') Tags
           th Actions
         tr(ng-repeat='message in message.messages | filter:message.searchText track by message._id')
           td(ng-click='editMessage(message)') {{message.name}}

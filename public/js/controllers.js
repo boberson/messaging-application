@@ -19,6 +19,27 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
   $scope.message.messages;
   $scope.message.searchText = "";
   getMessages();
+  if($scope.message.messages) {
+    $scope.message.messages.sort(sortByName);
+  };
+  var asc = true;
+  function sortByTags(a, b) {
+    var ascending = (asc) ? 1 : -1
+    if(a.tags.length > b.tags.length) {
+      return ascending;
+    } else {
+      return ascending * -1; 
+    }
+  }
+  
+  function sortByName(a, b) {
+    var ascending = (asc) ? 1 : -1
+    if(a.name > b.name) {
+      return ascending;
+    } else {
+      return ascending * -1; 
+    }
+  }
   var errorCb = function(data) {
     AlertService.addAlert("danger", "Error:\n" + data.message);
   };
@@ -46,11 +67,18 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
   function getMessages() {
     MessageService.getMessages().
     success(function(data) {
-      $scope.message.messages = data;
+      $scope.message.messages = data.sort(sortByName);
     }).
     error(errorCb);
   };
-  
+  $scope.sortByName = function(){
+    asc = !asc;
+    $scope.message.messages.sort(sortByName);
+  };
+  $scope.sortByTags = function(){
+    asc = !asc;
+    $scope.message.messages.sort(sortByTags);
+  };
   function createMessage(msg, cb) {
     MessageService.createMessage(msg).
     success(function(data) {
