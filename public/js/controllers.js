@@ -8,6 +8,7 @@ function HeaderCtrl($scope, $location) {
 }
 function AlertCtrl($scope, AlertService) {
   $scope.alerts = AlertService.alerts;
+  $scope.notify = AlertService.notify;
   $scope.closeAlert = function(index) {
     $scope.alerts.splice(index,1);
   };
@@ -758,14 +759,15 @@ function ProcessCtrl($scope, $timeout, $location, ProcessService, AlertService) 
   var source = new EventSource('/api/stats');
   source.onerror = function(data) {
     console.log("Error on sse listener: ");
-  }
+  };
   source.onmessage = function(e) {
-    var procs = JSON.parse(e.data);
+    var data = JSON.parse(e.data);
+    AlertService.addAlert("info", data.message);     
     $scope.$apply(function() {
-      $scope.processes = procs; 
+      $scope.processes = data.processes; 
       areProcesses();
     });
-  }
+  };
   source.onopen =function(data) {
     console.log("Opened the listener to the server ready for updated events.");
   };

@@ -471,7 +471,7 @@ exports.procStats = function(req, res) {
   req.on('close', function() {
     var toRemove;
     for(var j = 0; j < openConnections.length; j++) {
-      if(openConnections[j] == res) {
+      if(openConnections[j] === res) {
         toRemove = j;
         break;
       };
@@ -480,11 +480,14 @@ exports.procStats = function(req, res) {
   });  
 };
 
-var ua = function() {
+var ua = function(message) {
   var result = em.getActiveProcesses();
+  var data = {};
+  data.processes = result;
+  data.message = message;
   openConnections.forEach(function(response){
-    response.write("data: "+JSON.stringify(result)+"\n\n");
+    response.write("data: "+JSON.stringify(data)+"\n\n");
   });
-}
+};
 em.on('updated', ua);
 

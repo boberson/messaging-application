@@ -52,7 +52,11 @@ ul.ma-nav > li.active > a:hover {
     font-size: 16px;
     width:1200px;
 }
-
+.ma-notification-checkbox {
+  position: fixed;
+  right: 30px;
+  top: 50px;
+}
 .ma-btn {
   margin: 2px; 
   border-radius: 5px;

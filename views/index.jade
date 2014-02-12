@@ -14,8 +14,9 @@ block body
         li(ng-class="{'active': isActive('/process')}")
           a(href="process") Process Manager
   .container
-    .alerts-container(ng-controller="AlertCtrl")
-      alert.ma-alert(ng-repeat="alert in alerts", type="alert.type", close="closeAlert($index)") {{alert.msg}}
+    .alerts(ng-controller="AlertCtrl")     
+      .alerts-container          
+        alert.ma-alert(ng-repeat="alert in alerts", type="alert.type", close="closeAlert($index)") {{alert.msg}}
     div(ng-view) 
 
 

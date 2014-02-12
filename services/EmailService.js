@@ -35,7 +35,7 @@ var Emailer = function() {
       proc.active = false;
       clearInterval(this.intervals[pid]);
       this.procs.splice(this.procs.indexOf(proc), 1);
-      this.emit('updated');
+      this.emit('updated', "Process sending To:\n"+proc.to+" finished or was killed");
     }
     ;
   };
@@ -43,7 +43,7 @@ var Emailer = function() {
     var proc = this.getProcess(pid);
     if (proc) {
       proc.completed += 1;
-      this.emit('updated');
+      this.emit('updated', "Sent Message To:\n"+proc.to);
     };
   };
 };

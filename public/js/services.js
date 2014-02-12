@@ -135,14 +135,17 @@ services.factory('ProcessService', ['$http', function($http) {
 services.factory('AlertService', ['$timeout', function($timeout) {
     var alertService = {};
     alertService.alerts = new Array();
+    alertService.notify = true;
     
     // Alert type can be info, success, warning, or danger.
     alertService.addAlert = function(alertType, alertMessage) {
-      var alt = {type: alertType, msg: alertMessage};
-      alertService.alerts.push(alt);
-      $timeout(function(){
-        alertService.alerts.splice(alertService.alerts.lastIndexOf(alt), 1);
-      },3500);
+      if(alertService.notify) {
+        var alt = {type: alertType, msg: alertMessage};
+        alertService.alerts.push(alt);
+        $timeout(function(){
+          alertService.alerts.splice(alertService.alerts.lastIndexOf(alt), 1);
+        },3500);
+      };      
     };
     
     return alertService;
