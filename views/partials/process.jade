@@ -1,6 +1,8 @@
 .container-int   
   .process-container
-    span.alert.alert-info(ng-class='{hidden: processExists}') No Email Processes Running
+    .loading(ng-class='{hidden: processExists}')
+      img(src="img/ajax-loader.gif", style="margin-right: 5px;")
+      span.alert.alert-info Waiting for Email Process Status    
     .process-cont(ng-class='{hidden: !processExists}')
       table.ma-table.table.table-striped.table-bordered.table-hover
           tr

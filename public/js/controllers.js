@@ -24,7 +24,7 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
   };
   var asc = true;
   function sortByTags(a, b) {
-    var ascending = (asc) ? 1 : -1
+    var ascending = (asc) ? 1 : -1;
     if(a.tags.length > b.tags.length) {
       return ascending;
     } else {
@@ -697,9 +697,8 @@ GenerateCtrl.$inject = ['$scope', '$filter', '$http', 'MessageService', 'HostSer
 
 function ProcessCtrl($scope, $timeout, $location, ProcessService, AlertService) {
   $scope.processes = [];
-  getProcesses();
+  //getProcesses();
   areProcesses();
-  
   function areProcesses() {
     $scope.processExists =  $scope.processes.length > 0;
   };
@@ -726,7 +725,7 @@ function ProcessCtrl($scope, $timeout, $location, ProcessService, AlertService) 
     });
   }; 
   
-  function getProcesses() {
+  /*function getProcesses() {
     ProcessService.getProcesses().
     success(function(data){
       if(data) {
@@ -736,17 +735,39 @@ function ProcessCtrl($scope, $timeout, $location, ProcessService, AlertService) 
     error(function(data){
       console.log(data);
     });
-  };
+  };*/
   function isActive() {
         return '/process' === $location.path();
   };
-  function tick() {
+  /*function tick() {
     getProcesses();
     areProcesses();
     if(isActive()) {
       $timeout(tick, 1000);
     }
+  };*/
+  //tick();
+  function processProcStats(data) {
+    console.log("Processing Data");
+    console.log(data);
+    $scope.$apply(function(){      
+      $scope.processes = JSON.parse(data);
+      areProcesses();
+    });
   };
-  tick();
+  var source = new EventSource('/api/stats');
+  source.onerror = function(data) {
+    console.log("Error on sse listener: ");
+  }
+  source.onmessage = function(e) {
+    var procs = JSON.parse(e.data);
+    $scope.$apply(function() {
+      $scope.processes = procs; 
+      areProcesses();
+    });
+  }
+  source.onopen =function(data) {
+    console.log("Opened the listener to the server ready for updated events.");
+  };
 };
 ProcessCtrl.$inject = ['$scope', '$timeout', '$location', 'ProcessService', 'AlertService'];

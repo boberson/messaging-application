@@ -35,6 +35,7 @@ var Emailer = function() {
       proc.active = false;
       clearInterval(this.intervals[pid]);
       this.procs.splice(this.procs.indexOf(proc), 1);
+      this.emit('updated');
     }
     ;
   };
@@ -42,7 +43,8 @@ var Emailer = function() {
     var proc = this.getProcess(pid);
     if (proc) {
       proc.completed += 1;
-    }
+      this.emit('updated');
+    };
   };
 };
 Emailer.prototype = Object.create(EventEmitter.prototype);
@@ -78,10 +80,11 @@ Emailer.createNew = function(host, emails, interval, em) {
     process.host = host;
     process.active = true;
     em.procs.push(process);
+    return em;
   } else {
     console.log("Error no emails to send");
-  }
-  ;
+    return false;
+  };
 };
 
 Emailer.prototype.on('updateSent', function(pid) {

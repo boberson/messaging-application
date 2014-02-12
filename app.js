@@ -83,6 +83,9 @@ app.post('/api/submit/email', api.submitEmail);
 //route for downloading zip files of messages
 app.get('/api/download/:filename', api.download);
 
+//url for sse to be sent to client
+app.get('/api/stats', api.procStats);
+
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
 

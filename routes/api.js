@@ -421,7 +421,7 @@ exports.submitEmail = function (req, res) {
     EmailerManager.createNew(data.hosts[idx].name, emails, data.timeout, em);
   }
   res.jsonp(200, {"status": "success"});
-}
+};
 
 // get /api/submit/download
 exports.submitDownload = function(req,  res) {
@@ -431,7 +431,7 @@ exports.submitDownload = function(req,  res) {
   var messages = processMessages(data.messageTemplates, data.varset);
   var fn = uploadMessages(messages);
   res.jsonp(200, {status: "success", filename : fn});
-} 
+}; 
 
 
 // get /api/processes
@@ -449,8 +449,42 @@ exports.killProcess = function(req, res) {
 
 // get /api/download/:filename to download a messages.zip
 exports.download = function(req, res) {
-  var downloaddir = "./tmp/"
-  var filename = req.params.filename;
-  
+  var downloaddir = "./tmp/";
+  var filename = req.params.filename;  
   res.download(downloaddir + filename);
+};
+
+//Listen to this page for getting the email processes status using server side events.
+var openConnections = new Array();
+exports.procStats = function(req, res) {
+  //set timeout as long as possible.
+  req.socket.setTimeout(Infinity);
+  var headers = {
+    'Content-Type': 'text/event-stream'
+  };
+  res.writeHead(200, headers);
+  res.write('\n');
+  
+  //push this repsonse object to the openconnections array.
+  openConnections.push(res);
+  
+  req.on('close', function() {
+    var toRemove;
+    for(var j = 0; j < openConnections.length; j++) {
+      if(openConnections[j] == res) {
+        toRemove = j;
+        break;
+      };
+    };
+    openConnections.splice(j,1);
+  });  
+};
+
+var ua = function() {
+  var result = em.getActiveProcesses();
+  openConnections.forEach(function(response){
+    response.write("data: "+JSON.stringify(result)+"\n\n");
+  });
 }
+em.on('updated', ua);
+
