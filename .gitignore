@@ -1,2 +1,7 @@
 node_modules/*
 nbproject
+public/js/lib/ng-table/.bower.json
+public/js/lib/ng-table/.bowerrc
+public/js/lib/ng-table/.editorconfig
+public/js/lib/ng-table/.jshintrc
+public/js/lib/ng-table/.travis.yml
