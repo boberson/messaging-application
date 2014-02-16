@@ -2,6 +2,9 @@
 .container {
   position: relative;
 }
+.header-container {
+  margin-bottom: 3px;
+}
 .ma-cap {
   text-transform: uppercase;
 }
@@ -69,7 +72,22 @@ input.ma {
   margin: 2px;
   padding: 2px;
 }
-
+.message-search-container {
+  margin-top: 3px;
+  display: inline-block;
+  border: solid 1px black;
+  border-radius: 5px;
+}
+.message-search {
+  display: inline-block;
+  margin-left: 2px;
+  border: 0px;
+  outline: 0px;
+}
+.message-search:focus {
+  border: 0px;
+  outline: 0px;
+}
 span.ma {
   border-radius: 5px;
   display: inline-block;
@@ -161,6 +179,13 @@ span.ma {
     border-radius: 5px;
     display: inline-table;
 }
+.search-item {
+    padding: 5px;
+    margin: 2px;
+    background-color: rgb(91, 192, 222);
+    border-radius: 5px;
+    display: inline-table;
+}
 
 .buttongroup {
     display: block;
@@ -236,3 +261,4 @@ div.status-hidden {
     border-radius: 5px;
     display: block;
 }
+// styling for search bar directive.

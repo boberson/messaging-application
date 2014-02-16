@@ -1,16 +1,15 @@
 .container-int
-  .ma-btn.btn.btn-primary.btn-sm(ng-click='new()') New Variable Set
-  .ma-btn.btn.btn-primary.btn-sm(ng-click='refresh()') Refresh
-  .search-cont
-      span.ma.label.label-success(style='margin: 2px;') Search
-      input.ma(type='text', ng-model='var.searchText')
+  .header-container
+    rr-search-bar(original="var.varsets", filtered="var.filteredVarsets") 
+    .ma-btn.btn.btn-primary.btn-sm(ng-click='new()') New Variable Set
+    .ma-btn.btn.btn-primary.btn-sm(ng-click='refresh()') Refresh
   .host-container
     table.ma-table.table.table-striped.table-bordered.table-hover
       tr
         th Name
         th From
         th Actions
-      tr(ng-repeat='varset in var.varsets | filter:var.searchText')
+      tr(ng-repeat='varset in var.filteredVarsets')
         td(ng-click='edit(varset)') {{ varset.name }}
         td(ng-click='edit(varset)') {{ varset.from}}
         td(style='width: 50px;')

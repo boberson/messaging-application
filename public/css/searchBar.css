@@ -1,0 +1,56 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Feb 16, 2014, 9:49:56 AM
+    Author     : rober_000
+*/
+
+.rr-search-input {
+  position: relative;
+  margin-top: 2px;
+  margin-left: 1px;
+  border: 0px;
+  outline: 0px;
+}
+
+.rr-search-input:focus {
+  outline: 0px;
+}
+
+.rr-search-container {
+  height: 30px;
+  position: relative;
+  margin-top: 5px;
+  display: inline-block;
+  border: solid 1px black;
+  border-radius: 5px;
+}
+
+.rr-search-item {
+  padding: 1px;
+  margin-left: 2px;
+  padding-left: 3px;
+  background-color: rgb(91, 192, 222);
+  border-radius: 5px;
+  display: inline-table;
+}
+
+.rr-close { 
+  float: right;
+  margin-left: 1px;
+  font-size: 21px;
+  font-weight: bold;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .2;
+  filter: alpha(opacity=20);
+}
+.rr-close:hover {
+  cursor: pointer;
+  opacity: .5;
+  filter: alpha(opacity=50);
+}

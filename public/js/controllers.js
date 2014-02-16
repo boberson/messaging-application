@@ -15,11 +15,14 @@ function AlertCtrl($scope, AlertService) {
 };
 AlertCtrl.$inject = ['$scope', 'AlertService'];
 
-function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
+function MessageCtrl($scope, MessageService, Message, $modal, AlertService, $filter) {
   $scope.message = {};
   $scope.message.messages;
+  $scope.message.filteredMessages;
   $scope.message.searchText = "";
+  $scope.message.searches = [];
   getMessages();
+    
   if($scope.message.messages) {
     $scope.message.messages.sort(sortByName);
   };
@@ -34,7 +37,7 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
   }
   
   function sortByName(a, b) {
-    var ascending = (asc) ? 1 : -1
+    var ascending = (asc) ? 1 : -1;
     if(a.name > b.name) {
       return ascending;
     } else {
@@ -63,7 +66,7 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
       AlertService.addAlert("warning", "Successfully Deleted Message\n" + message.name);
     }).
     error(errorCb);
-  };  
+  };
   
   function getMessages() {
     MessageService.getMessages().
@@ -162,7 +165,7 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService) {
   };
   
 }
-MessageCtrl.$inject = ['$scope', 'MessageService', 'Message', '$modal', 'AlertService'];
+MessageCtrl.$inject = ['$scope', 'MessageService', 'Message', '$modal', 'AlertService', '$filter'];
 
 function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title, saveMessage) {
   $scope.message = message;
@@ -263,8 +266,10 @@ function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title
 }
 MessageFormCtrl.$inject = ['$scope', '$modalInstance', 'MetadataService', 'message', 'title', 'saveMessage'];
 
-function VarCtrl($scope, $modal, VarService, AlertService) {
+function VarCtrl($scope, $modal, VarService, AlertService, $filter) {
   $scope.var = {};
+  $scope.var.filteredVarsets;
+  $scope.var.varsets;
   var cbSuccess = function(data) { AlertService.addAlert("success", "Success:\n"+data.msg); getVarSets(); };
   var cbFailure = function(data) { AlertService.addAlert("danger", "Error:\n"+data.msg); };
   getVarSets();
@@ -282,7 +287,7 @@ function VarCtrl($scope, $modal, VarService, AlertService) {
   };
   
   function getVarSets() {
-    VarService.getVarSets().success(function(data){ $scope.var.varsets = data; }).error(cbFailure);
+    VarService.getVarSets().success(function(data){ $scope.var.varsets = data;}).error(cbFailure);
   };
   
   function deleteVarSet(id) {
@@ -325,7 +330,7 @@ function VarCtrl($scope, $modal, VarService, AlertService) {
     modalInstance.result.then(function () { getVarSets(); }, function () { getVarSets(); });
   };
 }
-VarCtrl.$inject = ['$scope', '$modal', 'VarService', 'AlertService'];
+VarCtrl.$inject = ['$scope', '$modal', 'VarService', 'AlertService', '$filter'];
 
 function VarFormCtrl($scope, $modalInstance, VarService, MetadataService, varSet, title, save) {
   $scope.template = varSet;
@@ -433,6 +438,7 @@ VarFormCtrl.$inject = ['$scope', '$modalInstance', 'VarService', 'MetadataServic
 function HostCtrl($scope, $location, HostService, $modal, AlertService) {
   $scope.hostdb = {};
   $scope.hostdb.hosts = new Array();
+  $scope.hostdb.filteredHosts = new Array();
   getHosts();
   
   $scope.refresh = function() {
@@ -575,8 +581,11 @@ HostFormCtrl.$inject = ['$scope', 'HostService', '$modalInstance', 'host', 'titl
 function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarService, AlertService, $window) {
   $scope.generate = {};
   $scope.generate.messages = new Array();
+  $scope.generate.filteredMessages = new Array();
   $scope.generate.hosts = new Array();
+  $scope.generate.filteredHosts = new Array();
   $scope.generate.varsets = new Array();
+  $scope.generate.filteredVarsets = new Array();
   $scope.oneAtATime = true;
   $scope.isopen = {};
   $scope.isopen.var = false;
