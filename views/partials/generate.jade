@@ -11,9 +11,8 @@
     accordion-group(is-open="isopen.msgs")
       accordion-heading Messages
         i.pull-right.glyphicon(ng-class='{"glyphicon-chevron-down": isopen.msgs, "glyphicon-chevron-right": !isopen.msgs}')
-      .search-cont
-        span.ma.label.label-success(style='margin: 2px;') Search Messages
-        input.ma(type='text', ng-model='generate.msgSearch', capitalize)    
+      .header-container
+        rr-search-bar(original='generate.messages', filtered='generate.filteredMessages')
       .message-container
         table.ma-table.table.table-striped.table-bordered.table-hover(style='height:281px;')
             tr
@@ -21,7 +20,7 @@
                 input(type='checkbox', ng-model='generate.selectAllMsgs')
               th Message Title
               th Tags
-            tr(ng-repeat='message in generate.messages | filter:generate.msgSearch')
+            tr(ng-repeat='message in generate.filteredMessages')
               td(style='width: 10px;')
                 input(type='checkbox', ng-model='message.selected')            
               td {{message.name}}
@@ -29,16 +28,15 @@
     accordion-group(is-open="isopen.var")
       accordion-heading Variable Set
         i.pull-right.glyphicon(ng-class='{"glyphicon-chevron-down": isopen.var, "glyphicon-chevron-right": !isopen.var}')
-      .search-cont
-          span.ma.label.label-success(style='margin: 2px;') Search Variable Sets
-          input.ma(type='text', ng-model='generate.varSearch')
+      .header-container
+        rr-search-bar(original='generate.varsets', filtered='generate.filteredVarsets')
       .host-container
         table.ma-table.table.table-striped.table-bordered.table-hover
           tr
             th(style='width: 10px;') 
             th Name
             th From
-          tr(ng-repeat='varset in generate.varsets | filter:generate.varSearch')
+          tr(ng-repeat='varset in generate.filteredVarsets')
             td(style='width:10px;')
                 input(type='radio', name='v', ng-model='generate.varset', ng-value='varset')
             td {{ varset.name }}
@@ -47,9 +45,8 @@
       accordion-group(is-open="isopen.host")
         accordion-heading Email Host
           i.pull-right.glyphicon(ng-class='{"glyphicon-chevron-down": isopen.host, "glyphicon-chevron-right": !isopen.host}')
-        .search-cont
-            span.ma.label.label-success(style='margin: 2px;') Search Hosts
-            input.ma(type='text', ng-model='generate.hostSearch')
+        .header-container
+          rr-search-bar(original='generate.hosts', filtered='generate.filteredHosts')
         .host-container(style='margin: 0px; padding: 0px;')
           table.ma-table.table.table-striped.table-bordered.table-hover(style='height:300px;')
             tr
@@ -58,11 +55,10 @@
               th Alias
               th SMTP Host
               th Email Addr
-            tr(ng-repeat='host in generate.hosts | filter:generate.hostSearch')
+            tr(ng-repeat='host in generate.filteredHosts')
               td(style='width:10px;')
                 input(type='checkbox', ng-model='host.selected')
               td {{ host.alias }}
               td {{ host.name}}
               td {{ host.email }}
-
     
