@@ -21,6 +21,26 @@ services.factory('MessageService',['$http', function($http) {
   messageService.getMessages = function() {
     return $http.get(allMessagesUrl);
   };
+  messageService.getMessage = function(id) {
+    return $http.get(messageUrl+"/"+id);
+  };
+  
+  messageService.messageChanged = function(id, orig, unchanged, changed, error) {
+    $http.get(messageUrl+"/"+id).success(function(data){
+      var messages = data;
+      if(messages.length > 0) {
+        if(angular.equals(messages[0], orig)) {
+          unchanged();
+        } else {
+          changed();
+        }
+      } else {
+        changed();
+      };
+    }).error(function(data){
+      error(data);
+    });
+  };
   
   messageService.updateMessage = function(message) {
     return $http.put(messageUrl, JSON.stringify(message));
@@ -52,6 +72,10 @@ services.factory('HostService',['$http', function($http) {
     return $http.get(allHostsUrl);
   };
   
+  hostService.getHost = function(id) {
+    return $http.get(hostUrl+"/"+id);
+  };
+  
   hostService.updateHost = function(host) {
     return $http.put(hostUrl, JSON.stringify(host));
   };
@@ -77,6 +101,10 @@ services.factory('VarService',['$http', function($http) {
   
   varService.getVarSets = function() {
     return $http.get(varSetsUrl);
+  };
+  
+  varService.getVarSet = function(id) {
+    return $http.get(varSvcUrl+"/"+id);
   };
   
   varService.updateVarSet = function(varset) {

@@ -50,19 +50,21 @@ app.get('/partial/:name', routes.partial);
 
 //Host API
 app.get('/api/hosts', api.getHosts);
+app.get('/api/host/:id', api.getHost);
 app.delete('/api/host/:id', api.deleteHost);
 app.put('/api/host', api.updateHost);
 app.post('/api/host', api.createHost);
 
 // Message API
 app.get('/api/messages', api.getMessages);
-//app.get('/api/message/:id', api.getMessage);
+app.get('/api/message/:id', api.getMessage);
 app.delete('/api/message/:id', api.deleteMessage);
 app.put('/api/message', api.updateMessage);
 app.post('/api/message', api.createMessage);
 
 // VarSet API
 app.get('/api/varsets', api.getVarSets);
+app.get('/api/varset/:id', api.getVarSet);
 app.delete('/api/varset/:id', api.deleteVarSet);
 app.put('/api/varset', api.updateVarSet);
 app.post('/api/varset', api.createVarSet);

@@ -124,22 +124,16 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService, $fil
       };
     });
   }
+  // returns true if the message hasn't changed since the edit window has been open.
+  function notChanged(original) {
+    if(original && original._id) {
+      
+    } else {
+      return false;
+    };    
+  }
   
-  function updateMessage(msg, cb) {
-    MessageService.updateMessage(msg).
-    success(function(data) {
-      AlertService.addAlert("success", "Successfully Updated Message:\n"+msg.name);
-      if(cb) {
-        cb();
-      };
-    }).
-    error(function(data) {
-      AlertService.addAlert("danger", "Error:\n"+data.msg);
-      if(cb) {
-        cb();
-      };
-    });
-  };
+  
   
   $scope.newMessage = function () {
     var modalInstance = $modal.open({
@@ -167,6 +161,7 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService, $fil
   
   $scope.editMessage = function (message) {
     Message.message = message;
+    var original = angular.copy(message);
     var modalInstance = $modal.open({
       templateUrl: 'templates/edit-form.html',
       controller: MessageFormCtrl,
@@ -178,7 +173,19 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService, $fil
           return "Edit Message";
         },
         saveMessage: function() {
-          return updateMessage;
+          return function (msg, cb) {
+            if(msg && msg._id) {
+                MessageService.messageChanged(msg._id, original, function() {
+                  MessageService.updateMessage(msg).success(function(data) {AlertService.addAlert("success", "Successfully Updated Message:\n"+msg.name); if(cb) {cb();};}).error(function(data) {AlertService.addAlert("danger", "Error:\n"+data.msg); if(cb) {cb();};});
+                }, function() {
+                  alert("Error Message Changed while you were editing it you will need to reload the edit window before saving any changes.");
+                }, function(data){
+                  alert("Error Saving Message. "+data.status);
+                });
+                
+
+            }
+          };
         }
       }
     });
@@ -195,6 +202,8 @@ MessageCtrl.$inject = ['$scope', 'MessageService', 'Message', '$modal', 'AlertSe
 
 function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title, saveMessage) {
   $scope.message = message;
+  
+  
   $scope.modalTitle = title;
   $scope.other = {};
   $scope.tagNames = new Array();
@@ -262,8 +271,7 @@ function MessageFormCtrl($scope, $modalInstance, MetadataService, message, title
     msg.tags = msg.tags.map(function(single) {
       return single.toUpperCase();
     });
-    saveMessage(msg, $modalInstance.close);   
-    
+    saveMessage(msg, $modalInstance.close);  
   };
 
   $scope.cancel = function () {

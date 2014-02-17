@@ -37,6 +37,16 @@ exports.getHosts = function (req, res) {
   });
 };
 
+exports.getHost = function(req,res) {
+  var id = req.params.id;  
+  Host.find({ _id: id },function(error, results){
+    if(error) {
+      console.log("error querying db: " + error);
+    }
+    sendJson(200, results, res);
+  });
+};
+
 exports.createHost = function(req, res) {
   var host = {};
   host.alias = req.body.alias;
@@ -99,15 +109,15 @@ exports.getMessages = function (req, res) {
   });
 };
 
-/*exports.getMessage = function(req,res) {
+exports.getMessage = function(req,res) {
   var id = req.params.id;  
   Message.find({ _id: id },function(error, results){
     if(error) {
       console.log("error querying db: " + error);
     }
-    res.json(results);
+    sendJson(200, results, res);
   });
-};*/
+};
 
 exports.createMessage = function(req,res) {
   //should do validation of message here later.
@@ -181,8 +191,17 @@ exports.getVarSets = function (req, res) {
     sendJson(200, results, res);
   });
 };
-/* Need to change the attributes from what a host was to what a varset is */
- 
+
+exports.getVarSet = function(req,res) {
+  var id = req.params.id;  
+  VarSet.find({ _id: id },function(error, results){
+    if(error) {
+      console.log("error querying db: " + error);
+    }
+    sendJson(200, results, res);
+  });
+};
+
 exports.createVarSet = function(req, res) {
   var varset = {};
   varset.name = req.body.name;
