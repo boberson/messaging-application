@@ -27,7 +27,7 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','ngRoute', 'ui.bootstrap']).
+angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives','ngRoute', 'ui.bootstrap', 'ngTable']).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.when('/message', {templateUrl: 'partial/message', controller: MessageCtrl});
     $routeProvider.when('/var', {templateUrl: 'partial/var', controller: VarCtrl});
