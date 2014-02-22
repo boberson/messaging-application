@@ -1,6 +1,6 @@
 .container-int
   .header-container
-    rr-search-bar(original="message.messages", filtered="message.filteredMessages")    
+    rr-search-bar(original="message.messages", filtered="message.filteredMessages", fields='messageFields')    
     .ma-btn.btn.btn-primary.btn-sm(ng-click='newMessage()') New Message
     .ma-btn.btn.btn-primary.btn-sm(ng-click='refresh()') Refresh Messages
   .message-container

@@ -51,6 +51,7 @@ directives.directive('rrSearchBar', function() {
     restrict: 'E',
     templateUrl: "templates/searchBarTemplate.html",
     scope: {
+      fields: '=',
       original: '=',
       filtered: '='
     },
@@ -68,8 +69,14 @@ directives.directive('rrSearchBar', function() {
       };
       
       var addSI = function() {
-        if($scope.filters.indexOf($scope.newSearchItem) < 0) {
-          $scope.filters.push($scope.newSearchItem);
+        if($scope.searchField) {
+          var searchObject = {};
+          searchObject[$scope.searchField.id] = $scope.newSearchItem;
+        } else {
+          var searchObject = $scope.newSearchItem;
+        }        
+        if($scope.filters.indexOf(searchObject) < 0) {
+          $scope.filters.push(searchObject);
         }
       };
       
@@ -86,7 +93,14 @@ directives.directive('rrSearchBar', function() {
         $scope.filtered = $scope.original;
         if(filters.length > 0) {
           for(var sIdx in filters) {
-            $scope.filtered = f($scope.filtered, filters[sIdx]);
+            var filter = filters[sIdx];
+            // Have to remove $$hashKey which gets added by angular ng-repeat.
+            if(typeof filter === 'object') {
+              if(filter['$$hashKey']) {
+                delete filter['$$hashKey'];
+              }
+            }
+            $scope.filtered = f($scope.filtered, filter);
           };
         };    
       };

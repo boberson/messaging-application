@@ -47,6 +47,7 @@ function MessageCtrl($scope, MessageService, Message, $modal, AlertService, $fil
   $scope.message.filteredMessages;
   $scope.message.searchText = "";
   $scope.message.searches = [];
+  $scope.messageFields = [{id: "name", name: "Title"}, {id: "text", name: "Body"}, {id: "tags", name: "Tags"}, {id: "description", name: "Description"}];
   getMessages();
     
   if($scope.message.messages) {
@@ -628,6 +629,7 @@ function GenerateCtrl($scope, $filter, $http, MessageService, HostService, VarSe
   $scope.generate.se = true;  
   $scope.hidedownload = true;
   $scope.generate.timeout = 1;
+  $scope.messageFields = [{id: "name", name: "Title"}, {id: "text", name: "Body"}, {id: "tags", name: "Tags"}, {id: "description", name: "Description"}];
   getMessages();
   getHosts();
   getVarSets();

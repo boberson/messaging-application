@@ -4,7 +4,10 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-<div class="rr-search-container">
-  <span class='rr-search-item' ng-repeat="item in filters">{{ item }}<span class="rr-close" ng-click='removeSI($index)'>&times;</span></span>
+<select class="rr-search-select"  ng-hide="!fields" ng-model="searchField" ng-options="f.name for f in fields">
+  <option value="">All</option>
+</select>
+<div class="rr-search-container">  
+  <span class='rr-search-item' ng-repeat="item in filters">{{item}}<span class="rr-close" ng-click='removeSI($index)'>&times;</span></span>
   <input class="rr-search-input" ng-model='newSearchItem' ng-keyup="keyevent($event)" placeholder="Search" capitalize/>
 </div>
