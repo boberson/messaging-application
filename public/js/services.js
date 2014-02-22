@@ -27,10 +27,8 @@
 
 /* Services */
 
-
-// Demonstrate how to register services
-// In this case it is a simple value service.
 var services = angular.module('myApp.services', []);
+
 services.factory('Message', function() {
    var msg = {};
    msg.message = {};
@@ -202,4 +200,73 @@ services.factory('AlertService', ['$timeout', function($timeout) {
     };
     
     return alertService;
+}]);
+
+
+//This service provides misc utilities that various controllers will use.
+services.factory('ControllerUtilities', [function(){
+    var ctrlUtils = {};
+    
+    /**
+     * this function will return an object that can be used to open a modal window.
+     * It will be wrapped by a function in a controller such that a custom modal can be created.
+     */
+    ctrlUtils.newModalObject = function(modalTemplate, modalController, title, object, saveFunc) {
+      var mo = {};
+      mo.templateUrl = modalTemplate;
+      mo.controller = modalController;      
+      mo.resolve = {};
+      mo.resolve.title = function() { return title; };
+      mo.resolve.object = function() { return object; };
+      mo.resolve.save = function() { return saveFunc; };
+      return mo;
+    };
+    
+    /*
+     * takes data that is returned from the Metadata Service function getPLAs
+     * returns the list of plain language addresses plaList sorted
+     */
+    ctrlUtils.sortPLAs = function(data) {
+      var sorted = data.sort(function(a,b) {
+        if(a.value >= b.value) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      var sortedPLAs = {};
+      for (var p in sorted) {
+        sortedPLAs[sorted[p]._id] = sorted[p].value;
+      };
+      var plaList = [];
+      for (var p in sortedPLAs) {
+        plaList.push(p);
+      }
+      return plaList;
+    };
+    
+    /*
+     * takes data that is returned from the Metadata Service function getRIs
+     * returns the list of routing indicators riList sorted
+     */
+    ctrlUtils.sortRIs = function(data) {
+      var sorted = data.sort(function(a,b) {
+        if(a.value >= b.value) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+      var sortedRIs = {};
+      for (var p in sorted) {
+        sortedRIs[sorted[p]._id] = sorted[p].value;
+      };
+      var riList = [];
+      for (var p in sortedRIs) {
+        riList.push(p);
+      }
+      return riList;
+    };
+    
+    return ctrlUtils;
 }]);

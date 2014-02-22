@@ -1,7 +1,7 @@
 .container-int
   .header-container
     rr-search-bar(original="hostdb.hosts", filtered="hostdb.filteredHosts")
-    .ma-btn.btn.btn-primary.btn-sm(ng-click='newHost()') New Host
+    .ma-btn.btn.btn-primary.btn-sm(ng-click='new()') New Host
     .ma-btn.btn.btn-primary.btn-sm(ng-click='refresh()') Refresh Hosts
   .host-container
     table.ma-table.table.table-striped.table-bordered.table-hover
@@ -11,9 +11,9 @@
         th Email Addr
         th Actions
       tr(ng-repeat='host in hostdb.filteredHosts')
-        td(ng-click='editHost(host)') {{ host.alias }}
-        td(ng-click='editHost(host)') {{ host.name}}
-        td(ng-click='editHost(host)') {{ host.email }}
+        td(ng-click='edit(host)') {{ host.alias }}
+        td(ng-click='edit(host)') {{ host.name}}
+        td(ng-click='edit(host)') {{ host.email }}
         td(style='width: 50px;')
           span.ma-btn.btn.btn-danger(style='margin-left: 2px;', ng-click='delete(host)') Delete
    

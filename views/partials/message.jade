@@ -1,7 +1,7 @@
 .container-int
   .header-container
     rr-search-bar(original="message.messages", filtered="message.filteredMessages", fields='messageFields')    
-    .ma-btn.btn.btn-primary.btn-sm(ng-click='newMessage()') New Message
+    .ma-btn.btn.btn-primary.btn-sm(ng-click='new()') New Message
     .ma-btn.btn.btn-primary.btn-sm(ng-click='refresh()') Refresh Messages
   .message-container
     table.ma-table.table.table-striped.table-bordered.table-hover
@@ -10,8 +10,8 @@
           th(ng-click='sortByTags()') Tags
           th Actions
         tr(ng-repeat='message in message.filteredMessages')
-          td(ng-click='editMessage(message)') {{message.name}}
-          td(style='width:300px;', ng-click='editMessage(message)') {{ message.tags.join(',') }}
+          td(ng-click='edit(message)') {{message.name}}
+          td(style='width:300px;', ng-click='edit(message)') {{ message.tags.join(',') }}
           td(style='width: 50px;')
             span.ma-btn.btn.btn-danger(style='margin-left: 2px;', ng-click='delete(message)') Delete
 
