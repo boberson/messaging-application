@@ -598,11 +598,11 @@ HostCtrl.$inject = ['$scope', '$location', 'HostService', '$modal', 'AlertServic
 /*
  * The controller for the Modal Window with the host form.
  */
-function HostFormCtrl($scope, HostService, $modalInstance, host, title, save) {
+function HostFormCtrl($scope, HostService, $modalInstance, object, title, save) {
   $scope.hostform = {};
-  $scope.hostform.host = host;
+  $scope.hostform.host = object;
   $scope.modalTitle = title;
-  var original = angular.copy(host);
+  var original = angular.copy(object);
   //returns true if the user has changed anything.
   $scope.changed = function(host) {
     return !angular.equals(host, original);
@@ -616,7 +616,7 @@ function HostFormCtrl($scope, HostService, $modalInstance, host, title, save) {
     $modalInstance.dismiss('cancel');
   };  
 }
-HostFormCtrl.$inject = ['$scope', 'HostService', '$modalInstance', 'host', 'title', 'save'];
+HostFormCtrl.$inject = ['$scope', 'HostService', '$modalInstance', 'object', 'title', 'save'];
 
 /*
  * This is the controller for the Generate Page.
