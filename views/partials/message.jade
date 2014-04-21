@@ -12,8 +12,8 @@
         tr(ng-repeat='message in message.filteredMessages')
           td(ng-click='edit(message)') {{message.name}}
           td(style='width:300px;', ng-click='edit(message)') {{ message.tags.join(',') }}
-          td(style='width: 50px;')
-            span.ma-btn.btn.btn-danger(style='margin-left: 2px;', ng-click='delete(message)') Delete
+          td(style='width:175px')
+            span.ma-btn.btn.btn-primary.btn-sm(style='margin-left: 2px;', ng-click='copy(message)') Copy
 
 
 

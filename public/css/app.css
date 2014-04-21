@@ -139,7 +139,7 @@ span.ma {
     margin-right: 20px;
 }
 .msgfld {
-    width: 650px;
+    width: 645px;
     border-color: black;
     border-width: 1px;
 }
@@ -149,8 +149,9 @@ span.ma {
     height: 450px;
     border-radius: 5px;
 }
+
 .msgdescr-cont {
-}
+}  
 .msgdescr {
     display: inline-block;
     border: 1px solid black;

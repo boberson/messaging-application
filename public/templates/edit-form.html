@@ -13,8 +13,8 @@ and open the template in the editor.
       <div class="modal-body container-int">
         <div class="message">Name: <span ng-show='form.mName.$error.required' style='font-weight: bold; color: red;'>Name is required!</span><br/>
           <input type="text" ng-model="message.name" name="mName" class="msgfld ma-cap" required/><br/>
-          Message: <span ng-show='form.mBody.$error.required' style='font-weight: bold; color: red;'>Message is required!</span><br/>
-          <textarea ng-model="message.text" name="mBody" class="msgbody ma-cap" required></textarea><br/><br/>
+          Message: <span ng-show='form.mBody.$error.required'  style='font-weight: bold; color: red;'>Message is required!</span><br/>
+          <textarea ng-model="message.text" ng-disabled="isEdit()" name="mBody" class="msgbody ma-cap" required></textarea><br/><br/>
         </div>
         <div class="tags">Add Tag:<br/>
           <input type="text" class="ma-cap" ng-model="other.newtag" typeahead='t for t in tagNames | filter:$viewValue' ng-keypress="keypressed($event)"/><br/>Tags:<br/>

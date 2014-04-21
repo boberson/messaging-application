@@ -98,6 +98,8 @@ function MessageCtrl($scope, MessageService, $modal, AlertService, $filter, Cont
   function afterModal() { getMessages(); }
   //template url for the modal window.
   var modalTemplateUrl = 'templates/edit-form.html';
+  var acp128TemplateUrl = 'templates/acp128.html';
+  
   
   // open a modal window with a new message object
   $scope.new = function () {
@@ -111,6 +113,20 @@ function MessageCtrl($scope, MessageService, $modal, AlertService, $filter, Cont
     modalInstance.result.then(afterModal, afterModal);
   };
   
+  // Open a copy of a message to edit it.
+  $scope.copy = function(message) {
+    var msg = {};
+    msg.name = message.name;
+    msg.text = message.text;
+    msg.tags = message.tags;
+    msg.description = message.description;
+    var title = "New Message";
+    var modalObject = ControllerUtilities.newModalObject(modalTemplateUrl, MessageFormCtrl, title, msg, createMessage);    
+    var modalInstance = $modal.open(modalObject);    
+    modalInstance.result.then(afterModal, afterModal);
+  };
+  
+  
   // open the message modal window with the provide message object.
   $scope.edit = function (message) {
     var original = angular.copy(message);
@@ -119,6 +135,7 @@ function MessageCtrl($scope, MessageService, $modal, AlertService, $filter, Cont
       //make sure that message is defined and has the _id attr.
       if(msg && msg._id) {
           //verify that the message hasn't changed since you started editing it.
+          msg.text = original.text;
           MessageService.messageChanged(msg._id, original, function() {
             //update the message.
             MessageService.updateMessage(msg).success(function(data) {AlertService.addAlert("success", "Successfully Updated Message:\n"+msg.name); if(cb) {cb();};}).error(function(data) {AlertService.addAlert("danger", "Error:\n"+data.msg); if(cb) {cb();};});
@@ -228,7 +245,13 @@ function MessageFormCtrl($scope, $modalInstance, MetadataService, object, title,
  
   $scope.sortedTags = {};
   getTags();
-  
+  $scope.isEdit = function() {
+    if(object._id) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   //returns false if the messages given "msg" is  the same as the original message.
   $scope.changed = function(msg) {
     return !angular.equals(msg, original);
