@@ -15,9 +15,9 @@ and open the template in the editor.
           Name:<br/>
           <input type="text" ng-model="template.name" class="ri-fld" required capitalize/><br/>
           OSRI:<br/>
-          <input type="text" ng-model="template.osri" class="ri-fld" typeahead='ri for ri in riList | filter:$viewValue' required capitalize/><br/>
+          <input type="text" maxlength="{{ri_max_length}}" ng-model="template.osri" class="ri-fld" typeahead='ri for ri in riList | filter:$viewValue' required capitalize/><br/>
           DRI:<br/>
-          <input type="text" ng-model="other.dri" class="ri-vld" typeahead='ri for ri in riList | filter:$viewValue' capitalize/> <span class="btn btn-xs btn-primary" ng-click="add(other.dri, template.dri); other.dri = '';">+</span><br/>
+          <input type="text" maxlength="{{ri_max_length}}" ng-model="other.dri" class="ri-vld" typeahead='ri for ri in riList | filter:$viewValue' capitalize/> <span class="btn btn-xs btn-primary" ng-click="add(other.dri, template.dri); other.dri = '';">+</span><br/>
           <div ng-repeat="dri in template.dri" class='ri'>{{dri}}<span style="margin-left: 1px;" ng-click="remove($index, template.dri)" class="close">&times;</span></div>
           Start Date:<br/>
           <div class="input-group" style='width:300px;'>

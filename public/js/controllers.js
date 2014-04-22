@@ -432,6 +432,7 @@ VarCtrl.$inject = ['$scope', '$modal', 'VarService', 'AlertService', '$filter', 
 function VarFormCtrl($scope, $modalInstance, VarService, MetadataService, object, title, save, ControllerUtilities) {
   $scope.template = object;
   $scope.modalTitle = title;
+  $scope.ri_max_length = 7;
   $scope.other = {};
   var original = angular.copy(object);
   $scope.plaList = new Array();

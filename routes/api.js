@@ -409,10 +409,9 @@ function processMessages(msgTmpls, varset) {
   function getParams(varset) {
     var params = {};
     params.osri = varset.osri;
-    params.dri = varset.dri.join(" ");
-    params.fl6 = "FM " + varset.from;
-    params.fl7 = "TO " + varset.action.join("\r\n");
-    params.fl8 = "INFO " + varset.info.join("\r\n");
+    params.fm = varset.from;
+    params.action = varset.action.join("\r\r\n");
+    params.info = varset.info.join("\r\r\n");
     return params;  
   };
   function incrDateByOneMinute(datev){
@@ -435,6 +434,25 @@ function processMessages(msgTmpls, varset) {
     jul = pad(getDoY(date),3);
     message = message.replace("{DTG}",dtg,i);
     message = message.replace("{JUL}",jul,i);
+    var message_lines = message.split('\n');        
+    tempfl2 = message_lines[0].trim();
+    dri_re = /\{DRI\}.*$/gi;
+    fl2 = tempfl2.replace(dri_re,'');
+    dris = varset.dri;
+    var line_length = 69;
+    var dri_length = 7;
+    for(var i = 0; i < dris.length; i++) {      
+      //the length of the line with a space and a new dri modulo the max line length
+      ln_lg = (fl2.length + dri_length + 1) % line_length;
+      
+      if(ln_lg > 0 && ln_lg < dri_length) {
+        fl2 = fl2 + "\r\r\n" + dris[i];
+      } else {
+        fl2 = fl2 + " " + dris[i];
+      }
+    }
+    message_lines[0] = fl2 + "\r\r";
+    message = message_lines.join("\n");
     date = incrDateByOneMinute(date);
     msgObj = { name: msgTmpls[i].name, message: message };
     messages.push(msgObj);
